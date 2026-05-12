@@ -1,0 +1,318 @@
+[
+  {
+    "id": "clue",
+    "name": "CLUE — Center for Learning and Undergraduate Enrichment",
+    "category": "academic",
+    "campus": "seattle",
+    "description": "Free late-night drop-in tutoring for many lower-division courses including writing, math, chemistry, physics, statistics, and language. Open Sunday through Thursday evenings during the academic quarter at Mary Gates Hall.",
+    "url": "https://webster.uaa.washington.edu/asp/website/clue/",
+    "tags": ["tutoring", "drop_in", "math", "writing", "chemistry", "physics", "statistics", "stem", "evening"],
+    "urgent": false
+  },
+  {
+    "id": "math-study-center",
+    "name": "Math Study Center",
+    "category": "academic",
+    "campus": "seattle",
+    "description": "Drop-in help for students enrolled in lower-division UW math courses, including precalculus, calculus, and linear algebra. Staffed by graduate TAs and undergraduate tutors in Communications Building.",
+    "url": "https://math.washington.edu/math-study-center",
+    "tags": ["tutoring", "math", "calculus", "precalculus", "drop_in", "stem"],
+    "urgent": false
+  },
+  {
+    "id": "owrc",
+    "name": "Odegaard Writing & Research Center (OWRC)",
+    "category": "academic",
+    "campus": "seattle",
+    "description": "Free one-on-one consultations to work through any stage of a writing project — brainstorming, drafting, revision, or research. Open to all undergraduates regardless of major.",
+    "url": "https://depts.washington.edu/owrc/",
+    "tags": ["writing", "tutoring", "research", "essay", "appointment"],
+    "urgent": false
+  },
+  {
+    "id": "instructional-center",
+    "name": "Instructional Center (IC)",
+    "category": "academic",
+    "campus": "seattle",
+    "description": "OMA&D's academic support hub: tutoring across STEM and writing, study groups, study skills workshops, and computer access. Serves all UW students with priority for OMA&D-affiliated students.",
+    "url": "https://depts.washington.edu/ic/",
+    "tags": ["tutoring", "stem", "writing", "study_skills", "identity", "first_generation"],
+    "urgent": false
+  },
+  {
+    "id": "academic-advising",
+    "name": "Undergraduate Academic Advising",
+    "category": "academic",
+    "campus": "seattle",
+    "description": "General advising for undeclared students and those exploring majors. Help with degree planning, navigating academic difficulty, and connecting to campus resources. Drop-in and scheduled appointments available.",
+    "url": "https://www.washington.edu/uaa/advising/",
+    "tags": ["advising", "degree_planning", "first_year", "transfer", "exploration"],
+    "urgent": false
+  },
+  {
+    "id": "drs",
+    "name": "Disability Resources for Students (DRS)",
+    "category": "academic",
+    "campus": "seattle",
+    "description": "Confidential accommodations for students with disabilities, chronic health conditions, learning differences, mental health diagnoses, or temporary injuries. Coordinates testing accommodations, note-taking, and accessible coursework.",
+    "url": "https://depts.washington.edu/uwdrs/",
+    "tags": ["disability", "accommodations", "accessibility", "mental_health", "chronic_illness"],
+    "urgent": false
+  },
+
+  {
+    "id": "counseling-center",
+    "name": "UW Counseling Center",
+    "category": "wellness",
+    "campus": "seattle",
+    "description": "Free short-term individual and group counseling for currently enrolled students. Same-day urgent appointments available during business hours. Located in Schmitz Hall.",
+    "url": "https://wellbeing.uw.edu/unit/counseling-center/",
+    "tags": ["counseling", "mental_health", "therapy", "stress", "anxiety", "depression"],
+    "urgent": false
+  },
+  {
+    "id": "hall-health-mental",
+    "name": "Hall Health Mental Health Clinic",
+    "category": "wellness",
+    "campus": "seattle",
+    "description": "Psychiatric evaluation, medication management, and short-term psychotherapy for enrolled students. Most services billable through Husky Health insurance or out-of-pocket on a sliding scale.",
+    "url": "https://wellbeing.uw.edu/unit/hall-health/",
+    "tags": ["mental_health", "psychiatry", "medication", "therapy", "insurance"],
+    "urgent": false
+  },
+  {
+    "id": "livewell",
+    "name": "LiveWell",
+    "category": "wellness",
+    "campus": "seattle",
+    "description": "Health promotion and advocacy for students affected by sexual assault, relationship violence, stalking, or substance-use concerns. Confidential advocacy and peer health education.",
+    "url": "https://wellbeing.uw.edu/unit/livewell/",
+    "tags": ["advocacy", "sexual_assault", "violence_prevention", "substance_use", "peer_education", "confidential"],
+    "urgent": true
+  },
+  {
+    "id": "safecampus",
+    "name": "SafeCampus",
+    "category": "wellness",
+    "campus": "all",
+    "description": "Anonymous violence-prevention hotline for any UW community member worried about themselves or someone else. Trained counselors help assess risk and connect people to resources. Available 24/7 in many cases via the published line.",
+    "url": "https://www.washington.edu/safecampus/",
+    "tags": ["safety", "violence_prevention", "anonymous", "crisis", "hotline"],
+    "urgent": true
+  },
+  {
+    "id": "huskyhelpline",
+    "name": "Husky HelpLine (24/7 mental health support)",
+    "category": "wellness",
+    "campus": "all",
+    "description": "Free 24/7 phone access to mental health support for enrolled UW students at all three campuses. Counselors can provide in-the-moment support and connect students to longer-term care.",
+    "url": "https://wellbeing.uw.edu/husky-helpline/",
+    "tags": ["mental_health", "crisis", "hotline", "24_7", "stress", "anxiety"],
+    "urgent": true
+  },
+  {
+    "id": "qcenter",
+    "name": "Q Center",
+    "category": "wellness",
+    "campus": "seattle",
+    "description": "Community space and support for LGBTQIA+ students at UW. Drop-in lounge, identity-based discussion groups, advocacy, and connections to affirming health and counseling resources.",
+    "url": "https://depts.washington.edu/qcenter/",
+    "tags": ["lgbtq", "identity", "community", "advocacy", "drop_in"],
+    "urgent": false
+  },
+
+  {
+    "id": "any-hungry-husky",
+    "name": "Any Hungry Husky Food Pantry",
+    "category": "basic_needs",
+    "campus": "seattle",
+    "description": "Free, no-questions-asked food pantry in Poplar Hall offering shelf-stable food, fresh produce when available, and hygiene supplies. Open to all UW students experiencing food insecurity.",
+    "url": "https://wellbeing.uw.edu/topic/food-security/",
+    "tags": ["food", "pantry", "free", "food_insecurity", "groceries"],
+    "urgent": false
+  },
+  {
+    "id": "basic-needs-hub",
+    "name": "Basic Needs Hub (UW Wellbeing)",
+    "category": "basic_needs",
+    "campus": "seattle",
+    "description": "Central place to learn about food, housing, financial, and emergency support for UW students. Connects students to CalFresh/SNAP enrollment help, emergency funds, and housing case management.",
+    "url": "https://wellbeing.uw.edu/topic/food-security/",
+    "tags": ["food", "housing", "snap", "calfresh", "emergency", "case_management"],
+    "urgent": false
+  },
+  {
+    "id": "emergency-aid",
+    "name": "Student Emergency Aid (Office of Student Life)",
+    "category": "basic_needs",
+    "campus": "seattle",
+    "description": "Short-term emergency funding for enrolled students facing unexpected hardships — medical costs, housing emergencies, food, transportation, or other urgent needs that could disrupt enrollment.",
+    "url": "https://wellbeing.uw.edu/topic/basic-needs/",
+    "tags": ["emergency_fund", "financial", "housing", "food", "urgent", "grant"],
+    "urgent": true
+  },
+  {
+    "id": "housing-case-management",
+    "name": "Housing Support & Case Management",
+    "category": "basic_needs",
+    "campus": "seattle",
+    "description": "One-on-one case management for students experiencing or at risk of housing insecurity. Helps with short-term shelter, navigating leases, and connecting to community resources.",
+    "url": "https://wellbeing.uw.edu/topic/basic-needs/",
+    "tags": ["housing", "homelessness", "case_management", "emergency"],
+    "urgent": true
+  },
+
+  {
+    "id": "upass",
+    "name": "U-PASS (Husky Card transit pass)",
+    "category": "transportation",
+    "campus": "seattle",
+    "description": "Unlimited rides on regional transit — Sound Transit, King County Metro, Community Transit, Pierce Transit, Kitsap Transit, and the Seattle Streetcar — included in service & activities fees for most students.",
+    "url": "https://transportation.uw.edu/getting-here/transit/upass",
+    "tags": ["transit", "upass", "bus", "light_rail", "commuter"],
+    "urgent": false
+  },
+  {
+    "id": "transportation-services",
+    "name": "UW Transportation Services",
+    "category": "transportation",
+    "campus": "seattle",
+    "description": "Parking permits, bike commuting resources, carpool & vanpool matching, late-night NightRide shuttle, and general commute planning for students, staff, and faculty.",
+    "url": "https://transportation.uw.edu/",
+    "tags": ["parking", "bike", "carpool", "shuttle", "commuter"],
+    "urgent": false
+  },
+  {
+    "id": "commuter-commons",
+    "name": "Commuter & Transfer Commons",
+    "category": "transportation",
+    "campus": "seattle",
+    "description": "Lounge, lockers, microwaves, and community programming for commuter and transfer students. A homebase between classes for students who don't live on campus.",
+    "url": "https://depts.washington.edu/ctcenter/",
+    "tags": ["commuter", "transfer", "lounge", "community", "lockers"],
+    "urgent": false
+  },
+  {
+    "id": "nightride",
+    "name": "NightRide Shuttle",
+    "category": "transportation",
+    "campus": "seattle",
+    "description": "Free late-night door-to-door shuttle service for UW students, staff, and faculty within a defined zone around campus. Designed to help people get home safely after dark.",
+    "url": "https://transportation.uw.edu/getting-here/transit/nightride",
+    "tags": ["shuttle", "safety", "late_night", "free", "commuter"],
+    "urgent": false
+  },
+
+  {
+    "id": "odegaard",
+    "name": "Odegaard Undergraduate Library",
+    "category": "study_space",
+    "campus": "seattle",
+    "description": "24/5 undergraduate library with quiet floors, collaborative spaces, the OWRC writing center, IT help, a computer commons, and the Husky Grind cafe. Central undergraduate study hub.",
+    "url": "https://www.lib.washington.edu/ougl",
+    "tags": ["library", "quiet_study", "group_study", "24_5", "computers", "writing_center"],
+    "urgent": false
+  },
+  {
+    "id": "suzzallo-allen",
+    "name": "Suzzallo & Allen Libraries",
+    "category": "study_space",
+    "campus": "seattle",
+    "description": "The main UW research libraries. Suzzallo's Reading Room is a landmark silent study space; Allen Library houses subject-specific collections, reservable group study rooms, and special collections.",
+    "url": "https://www.lib.washington.edu/suzzallo",
+    "tags": ["library", "quiet_study", "group_study", "research", "reservable"],
+    "urgent": false
+  },
+  {
+    "id": "hub-study",
+    "name": "Husky Union Building (HUB) Study Spaces",
+    "category": "study_space",
+    "campus": "seattle",
+    "description": "Lounges, booths, reservable meeting rooms, dining, and event spaces in the student union. Great for group projects, casual study, or meeting clubs and student organizations.",
+    "url": "https://hub.washington.edu/",
+    "tags": ["group_study", "lounge", "food", "student_orgs", "reservable"],
+    "urgent": false
+  },
+  {
+    "id": "branch-libraries",
+    "name": "UW Branch Libraries",
+    "category": "study_space",
+    "campus": "seattle",
+    "description": "Smaller subject-focused libraries — Engineering, Health Sciences, Foster Business, Built Environments, Music, and more — often quieter than the main libraries and tailored to specific disciplines.",
+    "url": "https://www.lib.washington.edu/libraries",
+    "tags": ["library", "quiet_study", "subject_specific", "stem", "business"],
+    "urgent": false
+  },
+
+  {
+    "id": "career-internship-center",
+    "name": "Career & Internship Center",
+    "category": "career",
+    "campus": "seattle",
+    "description": "One-on-one career coaching, resume and cover-letter reviews, mock interviews, career fairs, and the Handshake job board. Open to all undergraduates regardless of major.",
+    "url": "https://careers.uw.edu/",
+    "tags": ["career_coaching", "resume", "interview", "internships", "jobs", "handshake"],
+    "urgent": false
+  },
+  {
+    "id": "handshake",
+    "name": "Handshake (UW Career Platform)",
+    "category": "career",
+    "campus": "all",
+    "description": "Official UW job and internship platform connecting students with employers actively recruiting Huskies. Apply to part-time jobs, internships, and full-time roles; RSVP to events and career fairs.",
+    "url": "https://uw.joinhandshake.com/",
+    "tags": ["jobs", "internships", "part_time", "career_fair", "employers"],
+    "urgent": false
+  },
+  {
+    "id": "student-employment",
+    "name": "UW Student Employment",
+    "category": "career",
+    "campus": "all",
+    "description": "On-campus job listings including work-study and non-work-study positions across libraries, dining, athletics, research labs, and administrative offices. Often a flexible fit for class schedules.",
+    "url": "https://www.washington.edu/students/osfa/employment/",
+    "tags": ["jobs", "on_campus", "work_study", "part_time", "income"],
+    "urgent": false
+  },
+  {
+    "id": "undergrad-research",
+    "name": "Undergraduate Research Program (URP)",
+    "category": "career",
+    "campus": "seattle",
+    "description": "Connects undergraduates with faculty-mentored research across every discipline. Offers funding, a research database, info sessions, and the annual Undergraduate Research Symposium.",
+    "url": "https://www.washington.edu/undergradresearch/",
+    "tags": ["research", "faculty_mentor", "stem", "humanities", "scholarships"],
+    "urgent": false
+  },
+
+  {
+    "id": "financial-aid",
+    "name": "Office of Student Financial Aid",
+    "category": "financial",
+    "campus": "all",
+    "description": "Manages FAFSA, WASFA, grants, loans, work-study, and need-based scholarships for UW students. First stop for questions about your financial-aid package or unexpected changes in your financial situation.",
+    "url": "https://www.washington.edu/financialaid/",
+    "tags": ["financial_aid", "fafsa", "wasfa", "loans", "grants", "work_study"],
+    "urgent": false
+  },
+  {
+    "id": "sfs",
+    "name": "Student Fiscal Services",
+    "category": "financial",
+    "campus": "seattle",
+    "description": "Handles tuition billing, payment plans, refunds, and 1098-T tax forms. Talk to them about payment-plan options, late fees, or holds on your account that block registration.",
+    "url": "https://finance.uw.edu/sfs/",
+    "tags": ["tuition", "billing", "payment_plan", "refunds", "registration_hold"],
+    "urgent": false
+  },
+  {
+    "id": "scholarships",
+    "name": "UW Scholarship Search",
+    "category": "financial",
+    "campus": "all",
+    "description": "Searchable database of UW-administered scholarships filterable by major, identity, year, and need. Many awards require only the FAFSA/WASFA plus a short essay.",
+    "url": "https://expd.uw.edu/scholarships/",
+    "tags": ["scholarships", "merit", "need_based", "essay", "fafsa"],
+    "urgent": false
+  }
+]
