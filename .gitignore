@@ -36,3 +36,5 @@ yarn-error.log*
 # database (regenerable via npm run seed)
 data/compass.db
 data/compass.db-journal
+data/compass.db-shm
+data/compass.db-wal
