@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { CATEGORY_LABELS, type RecommendResponse } from '@/lib/types';
 
 const EXAMPLES = [
@@ -41,9 +42,19 @@ export default function Home() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
       <header className="mb-8">
-        <div className="flex items-baseline gap-3">
-          <h1 className="text-3xl font-bold tracking-tight text-husky-purple">UW Compass</h1>
-          <span className="text-sm text-slate-500">an AI resource finder for UW students</span>
+        <div className="flex items-baseline justify-between gap-3">
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-3xl font-bold tracking-tight text-husky-purple">UW Compass</h1>
+            <span className="hidden text-sm text-slate-500 sm:inline">
+              an AI resource finder for UW students
+            </span>
+          </div>
+          <Link
+            href="/about"
+            className="text-sm text-slate-500 hover:text-husky-purple hover:underline"
+          >
+            About / How it works →
+          </Link>
         </div>
         <p className="mt-2 text-slate-600">
           Describe what's going on. We'll point you to the right campus resources and a clear next

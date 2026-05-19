@@ -5,7 +5,7 @@
     "category": "academic",
     "campus": "seattle",
     "description": "Free late-night drop-in tutoring for many lower-division courses including writing, math, chemistry, physics, statistics, and language. Open Sunday through Thursday evenings during the academic quarter at Mary Gates Hall.",
-    "url": "https://webster.uaa.washington.edu/asp/website/clue/",
+    "url": "https://academicsupport.uw.edu/clue/",
     "tags": ["tutoring", "drop_in", "math", "writing", "chemistry", "physics", "statistics", "stem", "evening"],
     "urgent": false
   },
@@ -15,7 +15,7 @@
     "category": "academic",
     "campus": "seattle",
     "description": "Drop-in help for students enrolled in lower-division UW math courses, including precalculus, calculus, and linear algebra. Staffed by graduate TAs and undergraduate tutors in Communications Building.",
-    "url": "https://math.washington.edu/math-study-center",
+    "url": "https://sites.math.washington.edu/~msc/",
     "tags": ["tutoring", "math", "calculus", "precalculus", "drop_in", "stem"],
     "urgent": false
   },
@@ -45,7 +45,7 @@
     "category": "academic",
     "campus": "seattle",
     "description": "General advising for undeclared students and those exploring majors. Help with degree planning, navigating academic difficulty, and connecting to campus resources. Drop-in and scheduled appointments available.",
-    "url": "https://www.washington.edu/uaa/advising/",
+    "url": "https://advising.uw.edu/",
     "tags": ["advising", "degree_planning", "first_year", "transfer", "exploration"],
     "urgent": false
   },
@@ -116,7 +116,7 @@
     "category": "wellness",
     "campus": "seattle",
     "description": "Community space and support for LGBTQIA+ students at UW. Drop-in lounge, identity-based discussion groups, advocacy, and connections to affirming health and counseling resources.",
-    "url": "https://depts.washington.edu/qcenter/",
+    "url": "https://sites.uw.edu/qcenter/",
     "tags": ["lgbtq", "identity", "community", "advocacy", "drop_in"],
     "urgent": false
   },
@@ -127,38 +127,38 @@
     "category": "basic_needs",
     "campus": "seattle",
     "description": "Free, no-questions-asked food pantry in Poplar Hall offering shelf-stable food, fresh produce when available, and hygiene supplies. Open to all UW students experiencing food insecurity.",
-    "url": "https://wellbeing.uw.edu/topic/food-security/",
+    "url": "https://www.washington.edu/anyhungryhusky/",
     "tags": ["food", "pantry", "free", "food_insecurity", "groceries"],
     "urgent": false
   },
   {
-    "id": "basic-needs-hub",
-    "name": "Basic Needs Hub (UW Wellbeing)",
+    "id": "livewell-basic-needs",
+    "name": "LiveWell Basic Needs Navigation",
     "category": "basic_needs",
     "campus": "seattle",
-    "description": "Central place to learn about food, housing, financial, and emergency support for UW students. Connects students to CalFresh/SNAP enrollment help, emergency funds, and housing case management.",
-    "url": "https://wellbeing.uw.edu/topic/food-security/",
-    "tags": ["food", "housing", "snap", "calfresh", "emergency", "case_management"],
+    "description": "LiveWell offers basic-needs navigation: confidential help connecting students to food, housing, SNAP/CalFresh enrollment, emergency funds, and other support systems. Talk to a peer wellness coach when you don't know where to start.",
+    "url": "https://wellbeing.uw.edu/livewell/",
+    "tags": ["food", "housing", "snap", "calfresh", "emergency", "case_management", "peer_coaching"],
     "urgent": false
   },
   {
     "id": "emergency-aid",
-    "name": "Student Emergency Aid (Office of Student Life)",
+    "name": "UW Emergency Aid",
     "category": "basic_needs",
-    "campus": "seattle",
-    "description": "Short-term emergency funding for enrolled students facing unexpected hardships — medical costs, housing emergencies, food, transportation, or other urgent needs that could disrupt enrollment.",
-    "url": "https://wellbeing.uw.edu/topic/basic-needs/",
+    "campus": "all",
+    "description": "Short-term emergency funding for enrolled students across Seattle, Bothell, and Tacoma campuses facing unexpected hardships — medical costs, housing emergencies, food, transportation, or other urgent needs that could disrupt enrollment. Aid may come as grants, short-term loans, or community-resource connections.",
+    "url": "https://www.washington.edu/emergencyaid/",
     "tags": ["emergency_fund", "financial", "housing", "food", "urgent", "grant"],
     "urgent": true
   },
   {
-    "id": "housing-case-management",
-    "name": "Housing Support & Case Management",
+    "id": "housing-resources",
+    "name": "Emergency Housing Resources (UW Libraries Guide)",
     "category": "basic_needs",
     "campus": "seattle",
-    "description": "One-on-one case management for students experiencing or at risk of housing insecurity. Helps with short-term shelter, navigating leases, and connecting to community resources.",
-    "url": "https://wellbeing.uw.edu/topic/basic-needs/",
-    "tags": ["housing", "homelessness", "case_management", "emergency"],
+    "description": "Curated guide aggregating UW and community emergency-housing resources for students experiencing or at risk of housing insecurity. Includes short-term shelter contacts, eviction-prevention programs, and case-management referrals.",
+    "url": "https://guides.lib.uw.edu/hunger/housingresources",
+    "tags": ["housing", "homelessness", "case_management", "emergency", "shelter"],
     "urgent": true
   },
 
@@ -168,7 +168,7 @@
     "category": "transportation",
     "campus": "seattle",
     "description": "Unlimited rides on regional transit — Sound Transit, King County Metro, Community Transit, Pierce Transit, Kitsap Transit, and the Seattle Streetcar — included in service & activities fees for most students.",
-    "url": "https://transportation.uw.edu/getting-here/transit/upass",
+    "url": "https://transportation.uw.edu/getting-here/transit/u-pass",
     "tags": ["transit", "upass", "bus", "light_rail", "commuter"],
     "urgent": false
   },
@@ -188,7 +188,7 @@
     "category": "transportation",
     "campus": "seattle",
     "description": "Lounge, lockers, microwaves, and community programming for commuter and transfer students. A homebase between classes for students who don't live on campus.",
-    "url": "https://depts.washington.edu/ctcenter/",
+    "url": "https://nstp.uw.edu/ctc/",
     "tags": ["commuter", "transfer", "lounge", "community", "lockers"],
     "urgent": false
   },
@@ -198,7 +198,7 @@
     "category": "transportation",
     "campus": "seattle",
     "description": "Free late-night door-to-door shuttle service for UW students, staff, and faculty within a defined zone around campus. Designed to help people get home safely after dark.",
-    "url": "https://transportation.uw.edu/getting-here/transit/nightride",
+    "url": "https://transportation.uw.edu/getting-around/shuttles/nightride",
     "tags": ["shuttle", "safety", "late_night", "free", "commuter"],
     "urgent": false
   },
@@ -311,7 +311,7 @@
     "category": "financial",
     "campus": "all",
     "description": "Searchable database of UW-administered scholarships filterable by major, identity, year, and need. Many awards require only the FAFSA/WASFA plus a short essay.",
-    "url": "https://expd.uw.edu/scholarships/",
+    "url": "https://www.washington.edu/financialaid/types-of-aid/scholarships/",
     "tags": ["scholarships", "merit", "need_based", "essay", "fafsa"],
     "urgent": false
   }
