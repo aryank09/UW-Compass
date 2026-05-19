@@ -33,7 +33,7 @@ yarn-error.log*
 .vscode/
 .idea/
 
-# database (regenerable via npm run seed)
+# legacy SQLite files (no longer used; safe to delete if present)
 data/compass.db
 data/compass.db-journal
 data/compass.db-shm
