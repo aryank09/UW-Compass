@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { CATEGORY_LABELS, type RecommendResponse } from '@/lib/types';
+import { CATEGORY_LABELS, type Campus, type RecommendResponse } from '@/lib/types';
 
 const EXAMPLES = [
   'I am stressed, behind in math, and need somewhere quiet to study.',
@@ -11,8 +11,16 @@ const EXAMPLES = [
   "I am a transfer student looking for an internship but my resume is rough.",
 ];
 
+const CAMPUS_OPTIONS: { value: Campus; label: string }[] = [
+  { value: 'all', label: 'All campuses' },
+  { value: 'seattle', label: 'Seattle' },
+  { value: 'bothell', label: 'Bothell' },
+  { value: 'tacoma', label: 'Tacoma' },
+];
+
 export default function Home() {
   const [input, setInput] = useState('');
+  const [campus, setCampus] = useState<Campus>('all');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<RecommendResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +35,7 @@ export default function Home() {
       const res = await fetch('/api/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input }),
+        body: JSON.stringify({ input, campus }),
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error ?? `Request failed (${res.status})`);
@@ -63,9 +71,37 @@ export default function Home() {
       </header>
 
       <form onSubmit={submit} className="space-y-3">
-        <label htmlFor="input" className="block text-sm font-medium text-slate-700">
-          What do you need help with?
-        </label>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <label htmlFor="input" className="block text-sm font-medium text-slate-700">
+            What do you need help with?
+          </label>
+          <div
+            role="radiogroup"
+            aria-label="Campus filter"
+            className="flex flex-wrap gap-1 rounded-full border border-slate-200 bg-white p-1 text-xs"
+          >
+            {CAMPUS_OPTIONS.map((opt) => {
+              const active = campus === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setCampus(opt.value)}
+                  disabled={loading}
+                  className={
+                    active
+                      ? 'rounded-full bg-husky-purple px-3 py-1 font-semibold text-white'
+                      : 'rounded-full px-3 py-1 text-slate-600 hover:text-husky-purple disabled:opacity-50'
+                  }
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <textarea
           id="input"
           value={input}

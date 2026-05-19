@@ -3,13 +3,14 @@ import { z } from 'zod';
 import { embed, extractNeeds, summarize } from '@/lib/ai';
 import { getAllResources, countResources } from '@/lib/db';
 import { rank } from '@/lib/recommend';
-import { RecommendResponse } from '@/lib/types';
+import { CAMPUSES, RecommendResponse } from '@/lib/types';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const RequestSchema = z.object({
   input: z.string().min(3, 'Tell us at least a few words about what you need.').max(2000),
+  campus: z.enum(CAMPUSES).optional().default('all'),
 });
 
 export async function POST(req: NextRequest) {
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-  const { input } = parsed.data;
+  const { input, campus } = parsed.data;
 
   if (countResources() === 0) {
     return NextResponse.json(
@@ -41,7 +42,17 @@ export async function POST(req: NextRequest) {
 
   try {
     const [inputEmbedding, needs] = await Promise.all([embed(input), extractNeeds(input)]);
-    const resources = getAllResources();
+    // Campus filter: a resource matches if it's marked for the requested campus
+    // OR marked as pan-UW ("all"). When the request is "all", show everything.
+    const resources = getAllResources().filter(
+      (r) => campus === 'all' || r.campus === campus || r.campus === 'all'
+    );
+    if (resources.length === 0) {
+      return NextResponse.json(
+        { error: `No resources are tagged for the ${campus} campus yet.` },
+        { status: 404 }
+      );
+    }
     const ranked = rank(inputEmbedding, needs, resources, { topK: 5 });
 
     const summary = await summarize({

@@ -160,9 +160,9 @@ If your GitHub account doesn't own the repo, the CLI alternative (`vercel login 
 - [x] Vitest test suite — 26 tests covering ranker + schema + 5 scenarios
 - [x] Link-health checker script (mitigates the "resources go stale" risk from §15)
 
-### Stretch goals from §5 (optional)
+### Stretch goals from §5
 
-- [ ] Campus filter (Seattle / Bothell / Tacoma) — schema already supports it
+- [x] Campus filter (All / Seattle / Bothell / Tacoma) — pill selector above the input
 - [ ] Feedback buttons ("helpful" / "not helpful") with anonymous logging
 - [ ] Saved recommendations (localStorage)
 - [ ] Multilingual input
