@@ -19,6 +19,15 @@ const config: Config = {
           'accent-teal': '#2ad2c9',
           'accent-pink': '#e93cac',
           'accent-lavender': '#c5b4e3',
+          keyframes: {
+            indeterminate: {
+              '0%': { transform: 'translateX(-100%)' },
+              '100%': { transform: 'translateX(200%)' },
+            }
+          },
+          animation: {
+            indeterminate: 'indeterminate 1.5s infinite linear',
+          }
         },
         husky: {
           purple: '#4b2e83',
