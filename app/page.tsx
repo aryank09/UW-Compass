@@ -68,7 +68,7 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-8">
+      <div className="relative bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-8">
         <form onSubmit={submit} className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <label htmlFor="input" className="block text-base font-semibold text-slate-800">
@@ -101,22 +101,15 @@ export default function Home() {
               })}
             </div>
           </div>
-          <div className="relative w-full">
-            <textarea
-              id="input"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              rows={4}
-              placeholder="e.g. I'm overwhelmed, behind in math, and need a quiet place to study."
-              className="w-full rounded-xl border border-slate-300 bg-slate-50 px-5 py-4 text-base shadow-inner focus:bg-white focus:border-uw-spirit-purple focus:outline-none focus:ring-4 focus:ring-uw-spirit-purple/20 transition-all resize-none block"
-              disabled={loading}
-            />
-            {loading && (
-              <div className="absolute bottom-[1px] left-[1px] right-[1px] h-1.5 overflow-hidden rounded-b-[11px] bg-slate-200">
-                <div className="h-full w-1/2 bg-uw-husky-purple animate-indeterminate"></div>
-              </div>
-            )}
-          </div>
+          <textarea
+            id="input"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            rows={4}
+            placeholder="e.g. I'm overwhelmed, behind in math, and need a quiet place to study."
+            className="w-full rounded-xl border border-slate-300 bg-slate-50 px-5 py-4 text-base shadow-inner focus:bg-white focus:border-uw-spirit-purple focus:outline-none focus:ring-4 focus:ring-uw-spirit-purple/20 transition-all resize-none block"
+            disabled={loading}
+          />
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex flex-wrap gap-2 flex-1">
               {EXAMPLES.map((ex) => (
@@ -140,6 +133,11 @@ export default function Home() {
             </button>
           </div>
         </form>
+        {loading && (
+          <div className="absolute bottom-[1px] left-[1px] right-[1px] h-1.5 overflow-hidden rounded-b-[15px] bg-slate-200">
+            <div className="h-full w-1/2 bg-uw-husky-purple animate-indeterminate"></div>
+          </div>
+        )}
       </div>
 
       {error && (
