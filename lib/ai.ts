@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { z } from 'zod';
 import {
   CATEGORIES,
   Category,
@@ -10,6 +11,45 @@ import {
   ZERO_USAGE,
   addUsage,
 } from './types';
+
+// ---------------------------------------------------------------------------
+// Runtime Zod schemas — validate tool-call JSON returned by the model so bad
+// model output is caught early instead of propagating as silent type errors.
+// ---------------------------------------------------------------------------
+
+const ExtractedNeedSchema = z.object({
+  category: z.enum(CATEGORIES),
+  intensity: z.number().int().min(1).max(5).transform((n) => n as 1 | 2 | 3 | 4 | 5),
+  confidence: z.enum(['high', 'medium', 'low']).optional(),
+  evidence: z.string(),
+  tags: z.array(z.string()),
+  urgent: z.boolean(),
+});
+
+const ExtractionResponseSchema = z.object({
+  needs: z.array(ExtractedNeedSchema),
+});
+
+const CritiqueResponseSchema = z.object({
+  needs: z.array(ExtractedNeedSchema),
+  critique_summary: z.string().optional(),
+});
+
+const SelectResourcesResponseSchema = z.object({
+  ids: z.array(z.string()),
+  reasoning: z.string().optional(),
+});
+
+const SummaryResponseSchema = z.object({
+  per_resource: z.array(
+    z.object({
+      id: z.string(),
+      why: z.string(),
+      evidence_quote: z.string(),
+    })
+  ),
+  next_steps: z.array(z.string()),
+});
 
 const EMBEDDING_MODEL = process.env.OPENAI_EMBEDDING_MODEL ?? 'text-embedding-3-small';
 const CHAT_MODEL = process.env.OPENAI_CHAT_MODEL ?? 'gpt-4o-mini';
@@ -212,20 +252,17 @@ async function critiqueNeeds(
 
   const toolCall = res.choices[0].message.tool_calls?.[0];
   if (!toolCall || toolCall.type !== 'function') {
-    // Fall back to initial needs if critique fails
     return { needs: initialNeeds, usage: usageFrom(res) };
   }
-  const parsed = JSON.parse(toolCall.function.arguments) as {
-    needs: ExtractedNeed[];
-    critique_summary: string;
-  };
-  if (parsed.critique_summary) {
-    console.log('[extractNeeds/critique]', parsed.critique_summary);
+  const raw = CritiqueResponseSchema.safeParse(JSON.parse(toolCall.function.arguments));
+  if (!raw.success) {
+    console.warn('[extractNeeds/critique] Invalid tool response, keeping initial needs:', raw.error.message);
+    return { needs: initialNeeds, usage: usageFrom(res) };
   }
-  return {
-    needs: parsed.needs.filter((n) => CATEGORIES.includes(n.category as Category)),
-    usage: usageFrom(res),
-  };
+  if (raw.data.critique_summary) {
+    console.log('[extractNeeds/critique]', raw.data.critique_summary);
+  }
+  return { needs: raw.data.needs, usage: usageFrom(res) };
 }
 
 // ---------------------------------------------------------------------------
@@ -259,8 +296,11 @@ export async function extractNeeds(
   if (!toolCall || toolCall.type !== 'function') {
     throw new Error('Need-extraction tool call missing from model response.');
   }
-  const parsed = JSON.parse(toolCall.function.arguments) as { needs: ExtractedNeed[] };
-  const firstPass = parsed.needs.filter((n) => CATEGORIES.includes(n.category as Category));
+  const raw = ExtractionResponseSchema.safeParse(JSON.parse(toolCall.function.arguments));
+  if (!raw.success) {
+    throw new Error(`Need-extraction returned invalid data: ${raw.error.message}`);
+  }
+  const firstPass = raw.data.needs;
   const firstUsage = usageFrom(res);
 
   if (!options.twoPass) {
@@ -351,10 +391,14 @@ export async function selectResources(
   if (!toolCall || toolCall.type !== 'function') {
     return { ids: candidates.slice(0, topK).map((c) => c.id), reasoning: '', usage: usageFrom(res) };
   }
-  const parsed = JSON.parse(toolCall.function.arguments) as { ids: string[]; reasoning: string };
+  const raw = SelectResourcesResponseSchema.safeParse(JSON.parse(toolCall.function.arguments));
+  if (!raw.success) {
+    console.warn('[selectResources] Invalid tool response, falling back to cosine order:', raw.error.message);
+    return { ids: candidates.slice(0, topK).map((c) => c.id), reasoning: '', usage: usageFrom(res) };
+  }
   return {
-    ids: parsed.ids.slice(0, topK),
-    reasoning: parsed.reasoning ?? '',
+    ids: raw.data.ids.slice(0, topK),
+    reasoning: raw.data.reasoning ?? '',
     usage: usageFrom(res),
   };
 }
@@ -464,18 +508,18 @@ For each resource, write a 1–2 sentence explanation of why it matches this stu
   if (!toolCall || toolCall.type !== 'function') {
     throw new Error('Summary tool call missing from model response.');
   }
-  const parsed = JSON.parse(toolCall.function.arguments) as {
-    per_resource: { id: string; why: string; evidence_quote: string }[];
-    next_steps: string[];
-  };
+  const raw = SummaryResponseSchema.safeParse(JSON.parse(toolCall.function.arguments));
+  if (!raw.success) {
+    throw new Error(`Summarizer returned invalid data: ${raw.error.message}`);
+  }
   const per_resource: Record<string, string> = {};
   const evidence_quotes: Record<string, string> = {};
-  for (const entry of parsed.per_resource) {
+  for (const entry of raw.data.per_resource) {
     per_resource[entry.id] = entry.why;
     if (entry.evidence_quote) evidence_quotes[entry.id] = entry.evidence_quote;
   }
   return {
-    output: { per_resource, evidence_quotes, next_steps: parsed.next_steps },
+    output: { per_resource, evidence_quotes, next_steps: raw.data.next_steps },
     usage: usageFrom(res),
   };
 }

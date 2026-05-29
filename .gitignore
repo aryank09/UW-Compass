@@ -33,6 +33,10 @@ yarn-error.log*
 .vscode/
 .idea/
 
+# local dev data files — never commit these
+data/feedback.jsonl
+data/gallery.jsonl
+
 # legacy SQLite files (no longer used; safe to delete if present)
 data/compass.db
 data/compass.db-journal

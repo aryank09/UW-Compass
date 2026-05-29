@@ -128,9 +128,11 @@ export function rank(
   }
   // Top up if diversification left us short.
   if (final.length < opts.topK) {
+    const finalIds = new Set(final.map((r) => r.resource.id));
     for (const rec of scored) {
-      if (final.includes(rec)) continue;
+      if (finalIds.has(rec.resource.id)) continue;
       final.push(rec);
+      finalIds.add(rec.resource.id);
       if (final.length >= opts.topK) break;
     }
   }

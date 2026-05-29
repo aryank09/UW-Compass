@@ -8,7 +8,7 @@ on:
 
 jobs:
   check:
-    name: Type-check & test
+    name: Type-check, test & build
     runs-on: ubuntu-latest
 
     steps:
@@ -25,5 +25,15 @@ jobs:
       - name: Type-check
         run: npm run typecheck
 
+      - name: Lint
+        run: npm run lint
+
       - name: Run tests
         run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Build must succeed without a live key; db.ts reads the committed
+          # resources.embedded.json so no seed step is needed.
+          OPENAI_API_KEY: placeholder-for-build

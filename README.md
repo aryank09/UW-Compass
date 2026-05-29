@@ -50,7 +50,7 @@ flowchart TB
     Summarize -- "{ needs, recommendations, next_steps }" --> Browser
 ```
 
-Three OpenAI calls per request: 1 embedding + 2 chat completions (embed and need extraction run in parallel). Resource embeddings are computed once at seed time.
+Three OpenAI calls per request: 1 embedding + 2 chat completions (embed and need extraction run in parallel). Resource embeddings are computed once at seed time. Optional power-user flags (`two_pass`, `use_ai_ranker`) add 1–2 extra calls.
 
 ## Project layout
 
@@ -115,12 +115,60 @@ weights: {
 
 Adjust and re-run `npm test` to check that all 5 evaluation scenarios still pass.
 
+## API reference
+
+### `POST /api/recommend`
+
+Returns a streaming NDJSON response (one JSON object per line). Non-success responses (4xx / 5xx) are plain JSON.
+
+**Request body**
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `input` | `string` (3–2000 chars) | required | Student's free-text description |
+| `campus` | `"all" \| "seattle" \| "bothell" \| "tacoma"` | `"all"` | Filter resources by campus |
+| `advisor` | `boolean` | `false` | Include per-signal scores and full ranked list |
+| `shareQuery` | `boolean` | `false` | Anonymously log the query to the gallery |
+| `prior_needs` | `ExtractedNeed[]` | — | Needs from a previous turn; merged with fresh extraction |
+| `student_context` | `{ year?, commuter?, first_gen? }` | — | Persona hints for need extraction |
+| `two_pass` | `boolean` | `false` | Run a second self-critique pass on extracted needs |
+| `use_ai_ranker` | `boolean` | `false` | Add an LLM re-ranking pass on top of cosine |
+
+**Stream events**
+
+| `type` | Payload | When |
+|--------|---------|------|
+| `needs` | `{ needs: ExtractedNeed[] }` | After embed + extract complete (~1 s) |
+| `done` | Full `RecommendResponse` fields | After summarization completes |
+| `error` | `{ error: string }` | If the pipeline fails mid-stream |
+
+**Advisor mode** — send `?advisor=1` in the browser URL or `advisor: true` in the body to receive `advisorData.allResults` (all resources with per-signal scores) and `meta` (token counts, latency, ranker label).
+
+### `POST /api/feedback`
+
+| Field | Type |
+|-------|------|
+| `resourceId` | `string` |
+| `query` | `string` |
+| `campus` | `string` |
+| `helpful` | `boolean` |
+
+Rate-limited to 50 votes/min per IP.
+
+### `GET /api/gallery`
+
+Returns `{ queries: string[] }` — the last 50 anonymously shared queries (requires KV; returns `[]` without it).
+
+---
+
 ## Testing
 
 ```bash
 npm test            # full test suite (Vitest)
 npm run check-links # HEAD-checks every URL in resources.json
 npm run typecheck   # tsc --noEmit
+npm run lint        # ESLint
+npm run format      # Prettier (auto-fix)
 ```
 
 The scenario tests bypass OpenAI by hand-crafting expected `ExtractedNeed[]` for each of the proposal's five evaluation scenarios (§9) and asserting the ranker surfaces matching resources in the top 5.
@@ -159,15 +207,15 @@ If your GitHub account doesn't own the repo, the CLI alternative (`vercel login 
 - [x] Ranked recommendations with multi-signal scoring + category diversification
 - [x] Single-page React UI with example prompts, urgent banner, next-step plan
 - [x] Project website at `/about` (overview, impact, architecture, AI explanation, user guide)
-- [x] Vitest test suite — 26 tests covering ranker + schema + 5 scenarios
+- [x] Vitest test suite — 60+ tests covering ranker, schema, scenarios, i18n, iCal, and rate limiter
 - [x] Link-health checker script (mitigates the "resources go stale" risk from §15)
 
 ### Stretch goals from §5
 
 - [x] Campus filter (All / Seattle / Bothell / Tacoma) — pill selector above the input
-- [ ] Feedback buttons ("helpful" / "not helpful") with anonymous logging
-- [ ] Saved recommendations (localStorage)
-- [ ] Multilingual input
+- [x] Feedback buttons ("helpful" / "not helpful") with anonymous logging (KV or local `.jsonl`)
+- [x] Last result persisted in `localStorage` — automatically restored on next visit
+- [x] Multilingual UI (en / es / zh / vi / ko); AI summarization also responds in the student's language
 
 ## License
 
