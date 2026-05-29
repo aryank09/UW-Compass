@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { embed, extractNeeds, summarize } from '@/lib/ai';
@@ -8,12 +9,89 @@ import { CAMPUSES, RecommendResponse } from '@/lib/types';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+// ---------------------------------------------------------------------------
+// In-memory rate limiter — sliding window, keyed by IP.
+// Note: in a multi-instance Vercel deployment each instance has its own map,
+// so this is "per-instance" rather than globally shared. It still prevents
+// bursts from a single IP hitting the same cold-started function repeatedly.
+// For strict global limits, swap in @upstash/ratelimit with Vercel KV.
+// ---------------------------------------------------------------------------
+const RATE_LIMIT_REQUESTS = 20;
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+
+interface RateLimitEntry {
+  count: number;
+  resetAt: number;
+}
+
+const rateLimitMap = new Map<string, RateLimitEntry>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now >= entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  if (entry.count >= RATE_LIMIT_REQUESTS) return true;
+  entry.count++;
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// In-memory response cache — keyed by sha256(campus:input), 5-minute TTL.
+// Same per-instance caveat as the rate limiter above.
+// ---------------------------------------------------------------------------
+const CACHE_TTL_MS = 5 * 60_000; // 5 minutes
+
+interface CacheEntry {
+  data: RecommendResponse;
+  expiresAt: number;
+}
+
+const responseCache = new Map<string, CacheEntry>();
+
+function getCacheKey(input: string, campus: string): string {
+  return createHash('sha256').update(`${campus}:${input}`).digest('hex');
+}
+
+function getCached(key: string): RecommendResponse | null {
+  const entry = responseCache.get(key);
+  if (!entry) return null;
+  if (Date.now() >= entry.expiresAt) {
+    responseCache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setCached(key: string, data: RecommendResponse): void {
+  responseCache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+}
+
+// ---------------------------------------------------------------------------
+// Route handler
+// ---------------------------------------------------------------------------
+
 const RequestSchema = z.object({
   input: z.string().min(3, 'Tell us at least a few words about what you need.').max(2000),
   campus: z.enum(CAMPUSES).optional().default('all'),
 });
 
 export async function POST(req: NextRequest) {
+  // Rate limiting — prefer the standard forwarded-for header set by Vercel
+  const ip =
+    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    req.headers.get('x-real-ip') ??
+    'unknown';
+
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a minute before trying again.' },
+      { status: 429, headers: { 'Retry-After': '60' } }
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -38,6 +116,13 @@ export async function POST(req: NextRequest) {
       },
       { status: 503 }
     );
+  }
+
+  // Cache check
+  const cacheKey = getCacheKey(input, campus);
+  const cached = getCached(cacheKey);
+  if (cached) {
+    return NextResponse.json(cached, { headers: { 'X-Cache': 'HIT' } });
   }
 
   try {
@@ -76,7 +161,9 @@ export async function POST(req: NextRequest) {
       recommendations,
       next_steps: summary.next_steps,
     };
-    return NextResponse.json(response);
+
+    setCached(cacheKey, response);
+    return NextResponse.json(response, { headers: { 'X-Cache': 'MISS' } });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error.';
     console.error('[/api/recommend]', err);

@@ -50,7 +50,8 @@ export interface Recommendation {
   resource: Resource;
   score: number;
   embedding_similarity: number;
-  matched_needs: Category[];
+  /** The student need category this resource satisfies, or null if none matched. */
+  matched_needs: Category | null;
   matched_tags: string[];
   why: string;
 }

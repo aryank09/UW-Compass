@@ -92,7 +92,7 @@ export function rank(
       },
       score,
       embedding_similarity: sim,
-      matched_needs: neededCategories.has(r.category) ? [r.category] : [],
+      matched_needs: neededCategories.has(r.category) ? r.category : null,
       matched_tags: matchedTags,
       why: '', // filled in by the summarizer
     };

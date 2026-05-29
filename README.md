@@ -4,8 +4,8 @@ An AI-powered resource finder for University of Washington students. Describe yo
 
 > CSS 382 — Introduction to Artificial Intelligence · DYOP group project
 
-- **App:** local — `npm run dev` (live URL pending)
-- **About / how it works:** [/about](app/about/page.tsx) on the deployed app
+- **App:** [uw-compass-c49yf22kw-aryank09s-projects.vercel.app](https://uw-compass-c49yf22kw-aryank09s-projects.vercel.app) — or run locally with `npm run dev`
+- **About / how it works:** [/about](https://uw-compass-c49yf22kw-aryank09s-projects.vercel.app/about) on the deployed app
 - **Repository:** https://github.com/aryank09/UW-Compass
 
 ## Quick start
@@ -98,6 +98,8 @@ Resources live in [`data/resources.json`](data/resources.json). Each entry has:
 
 After editing, re-run `npm run seed` to refresh embeddings, then `npm run check-links` to verify URLs.
 
+> **Important:** `data/resources.embedded.json` is a generated artefact that is committed to the repository so Vercel builds work without an OpenAI key. If you edit `data/resources.json` and forget to run `npm run seed`, the deployed app will silently use stale embeddings — the resource list will look correct but semantic search quality degrades. Always commit the updated `resources.embedded.json` alongside any `resources.json` changes.
+
 ## Tuning the ranker
 
 Weights live in [`lib/recommend.ts`](lib/recommend.ts):
@@ -148,7 +150,7 @@ If your GitHub account doesn't own the repo, the CLI alternative (`vercel login 
 
 - [x] **Week 1** — repo + seeded resource DB + working `/api/recommend`
 - [x] **Week 2** — end-to-end AI pipeline + frontend + 5 scenarios verified
-- [ ] **Week 3** — public deployment, project website, final polish
+- [x] **Week 3** — public deployment, project website, final polish
 
 ### Done
 
