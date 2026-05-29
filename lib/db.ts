@@ -11,6 +11,10 @@ export function getAllResources(): ResourceWithEmbedding[] {
   return RESOURCES;
 }
 
+export function getResourceById(id: string): ResourceWithEmbedding | undefined {
+  return RESOURCES.find((r) => r.id === id);
+}
+
 export function countResources(): number {
   return RESOURCES.length;
 }

@@ -41,10 +41,19 @@ export interface ResourceWithEmbedding extends Resource {
 export interface ExtractedNeed {
   category: Category;
   intensity: 1 | 2 | 3 | 4 | 5;
-  confidence: 'high' | 'medium' | 'low';
+  /** Populated by the AI; not used by the ranker but displayed in the UI. */
+  confidence?: 'high' | 'medium' | 'low';
   evidence: string;
   tags: string[];
   urgent: boolean;
+}
+
+/** Per-signal scores exposed in advisor mode. */
+export interface ResourceScores {
+  embedding: number;
+  category: number;
+  tags: number;
+  urgency: number;
 }
 
 export interface Recommendation {
@@ -55,10 +64,24 @@ export interface Recommendation {
   matched_needs: Category | null;
   matched_tags: string[];
   why: string;
+  /** Populated when the request is made in advisor mode. */
+  scores?: ResourceScores;
+}
+
+export interface AdvisorData {
+  allResults: Recommendation[];
+  weights: {
+    embedding: number;
+    categoryMatch: number;
+    tagOverlap: number;
+    urgencyBoost: number;
+  };
 }
 
 export interface RecommendResponse {
   needs: ExtractedNeed[];
   recommendations: Recommendation[];
   next_steps: string[];
+  /** Present only when advisor=true is sent in the request. */
+  advisorData?: AdvisorData;
 }

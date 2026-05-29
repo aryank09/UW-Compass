@@ -107,7 +107,8 @@ Guidelines:
 - Return one need per distinct concept the student mentions. Do not invent needs that aren't supported by the text.
 - intensity is calibrated to the student's language, not how serious the underlying issue is in absolute terms.
 - urgent=true should be rare — only for safety risk, immediate food/housing crisis, or explicit self-harm.
-- Use snake_case for tags.`;
+- Use snake_case for tags.
+- Detect the language of the student's input. Write the evidence field in that same language. Keep all tag values in English snake_case.`;
 
 export async function extractNeeds(studentInput: string): Promise<ExtractedNeed[]> {
   const res = await client().chat.completions.create({
@@ -181,7 +182,7 @@ const SUMMARY_TOOL = {
   },
 };
 
-const SUMMARY_SYSTEM_PROMPT = `You write short, warm, practical recommendations for University of Washington students. Tone: a knowledgeable peer, not a marketing brochure. Reference the student's own situation when explaining each resource. Never invent resources beyond the list provided.`;
+const SUMMARY_SYSTEM_PROMPT = `You write short, warm, practical recommendations for University of Washington students. Tone: a knowledgeable peer, not a marketing brochure. Reference the student's own situation when explaining each resource. Never invent resources beyond the list provided. Detect the language of the student's input and respond in that same language for all human-facing text (why, next_steps). Resource names may stay in English.`;
 
 export async function summarize(input: SummaryInput): Promise<SummaryOutput> {
   const resourcesBlock = input.topResources

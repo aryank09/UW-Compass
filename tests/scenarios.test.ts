@@ -74,8 +74,8 @@ const SCENARIOS: Scenario[] = [
 describe('Proposal §9 — evaluation scenarios', () => {
   for (const scenario of SCENARIOS) {
     it(`"${scenario.name}" surfaces at least one resource in every expected category`, () => {
-      const ranked = rank(ZERO_EMBEDDING, scenario.needs, RESOURCES, { topK: 5 });
-      const topCategories = new Set(ranked.map((r) => r.resource.category));
+      const { recommendations } = rank(ZERO_EMBEDDING, scenario.needs, RESOURCES, { topK: 5 });
+      const topCategories = new Set(recommendations.map((r) => r.resource.category));
       for (const expected of scenario.expectedCategories) {
         expect(
           topCategories.has(expected),
@@ -85,9 +85,9 @@ describe('Proposal §9 — evaluation scenarios', () => {
     });
 
     it(`"${scenario.name}" produces 5 results without duplicates`, () => {
-      const ranked = rank(ZERO_EMBEDDING, scenario.needs, RESOURCES, { topK: 5 });
-      expect(ranked.length).toBe(5);
-      const ids = ranked.map((r) => r.resource.id);
+      const { recommendations } = rank(ZERO_EMBEDDING, scenario.needs, RESOURCES, { topK: 5 });
+      expect(recommendations.length).toBe(5);
+      const ids = recommendations.map((r) => r.resource.id);
       expect(new Set(ids).size).toBe(ids.length);
     });
   }
@@ -96,8 +96,8 @@ describe('Proposal §9 — evaluation scenarios', () => {
     const urgentNeeds: ExtractedNeed[] = [
       need('wellness', ['crisis', 'mental_health'], 'thinking about hurting myself', 5, true),
     ];
-    const ranked = rank(ZERO_EMBEDDING, urgentNeeds, RESOURCES, { topK: 3 });
-    const hasUrgent = ranked.some((r) => r.resource.urgent);
+    const { recommendations } = rank(ZERO_EMBEDDING, urgentNeeds, RESOURCES, { topK: 3 });
+    const hasUrgent = recommendations.some((r) => r.resource.urgent);
     expect(hasUrgent, 'top-3 should include at least one urgent resource').toBe(true);
   });
 });

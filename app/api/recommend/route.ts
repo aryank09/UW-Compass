@@ -76,10 +76,22 @@ function setCached(key: string, data: RecommendResponse): void {
 const RequestSchema = z.object({
   input: z.string().min(3, 'Tell us at least a few words about what you need.').max(2000),
   campus: z.enum(CAMPUSES).optional().default('all'),
+  /** When true, include per-signal scores and all resources in the response. */
+  advisor: z.boolean().optional().default(false),
+  /** When true, save the (sanitized) query to the anonymous gallery. */
+  shareQuery: z.boolean().optional().default(false),
 });
 
+/** Strip obvious PII patterns before storing a query in the gallery. */
+function sanitizeQuery(q: string): string {
+  return q
+    .replace(/[\w.+]+@[\w.]+\.\w+/g, '[email]') // email addresses
+    .replace(/\b\d{7,9}\b/g, '[id]')              // student/employee IDs
+    .replace(/\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b/g, '[phone]'); // phone numbers
+}
+
 export async function POST(req: NextRequest) {
-  // Rate limiting — prefer the standard forwarded-for header set by Vercel
+  // Rate limiting
   const ip =
     req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
     req.headers.get('x-real-ip') ??
@@ -106,29 +118,27 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
-  const { input, campus } = parsed.data;
+  const { input, campus, advisor, shareQuery } = parsed.data;
 
   if (countResources() === 0) {
     return NextResponse.json(
-      {
-        error:
-          'Resource database is empty. Run `npm run seed` after setting OPENAI_API_KEY.',
-      },
+      { error: 'Resource database is empty. Run `npm run seed` after setting OPENAI_API_KEY.' },
       { status: 503 }
     );
   }
 
-  // Cache check
+  // Cache is bypassed in advisor mode (advisor wants live scores, not cached top-5).
   const cacheKey = getCacheKey(input, campus);
-  const cached = getCached(cacheKey);
-  if (cached) {
-    return NextResponse.json(cached, { headers: { 'X-Cache': 'HIT' } });
+  if (!advisor) {
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached, { headers: { 'X-Cache': 'HIT' } });
+    }
   }
 
   try {
     const [inputEmbedding, needs] = await Promise.all([embed(input), extractNeeds(input)]);
-    // Campus filter: a resource matches if it's marked for the requested campus
-    // OR marked as pan-UW ("all"). When the request is "all", show everything.
+
     const resources = getAllResources().filter(
       (r) => campus === 'all' || r.campus === campus || r.campus === 'all'
     );
@@ -138,7 +148,11 @@ export async function POST(req: NextRequest) {
         { status: 404 }
       );
     }
-    const ranked = rank(inputEmbedding, needs, resources, { topK: 5 });
+
+    const { recommendations: ranked, advisorData } = rank(inputEmbedding, needs, resources, {
+      topK: 5,
+      advisor,
+    });
 
     const summary = await summarize({
       studentInput: input,
@@ -160,9 +174,39 @@ export async function POST(req: NextRequest) {
       needs,
       recommendations,
       next_steps: summary.next_steps,
+      ...(advisor && advisorData
+        ? {
+            advisorData: {
+              ...advisorData,
+              allResults: advisorData.allResults.map((r) => ({
+                ...r,
+                why: summary.per_resource[r.resource.id] ?? '',
+              })),
+            },
+          }
+        : {}),
     };
 
-    setCached(cacheKey, response);
+    if (!advisor) setCached(cacheKey, response);
+
+    // Gallery opt-in: save sanitized query to KV or local file.
+    if (shareQuery && input.length > 20) {
+      const safe = sanitizeQuery(input);
+      try {
+        if (process.env.KV_REST_API_URL) {
+          const { kv } = await import('@vercel/kv');
+          await kv.lpush('gallery:queries', safe);
+          await kv.ltrim('gallery:queries', 0, 49);
+        } else {
+          const { appendFileSync } = await import('fs');
+          const { join } = await import('path');
+          appendFileSync(join(process.cwd(), 'data', 'gallery.jsonl'), safe + '\n', 'utf-8');
+        }
+      } catch (err) {
+        console.error('[/api/recommend] Gallery write failed:', err);
+      }
+    }
+
     return NextResponse.json(response, { headers: { 'X-Cache': 'MISS' } });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error.';
