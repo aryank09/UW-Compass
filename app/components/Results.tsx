@@ -17,7 +17,7 @@ export function NeedsSection({
       </h2>
       {needs.length === 0 ? (
         <p className="text-base text-slate-600 italic">
-          We weren't sure which category fits — the recommendations below are based on overall similarity to UW resources.
+          {s.noCategoryMatch}
         </p>
       ) : (
         <ul className="space-y-3">
@@ -46,11 +46,11 @@ export function NeedsSection({
               </div>
               <div className="flex flex-row sm:flex-col gap-2 sm:gap-1 shrink-0">
                 <span className="text-xs font-semibold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-200 shadow-sm">
-                  Intensity: {need.intensity}/5
+                  {s.intensityLabel}: {need.intensity}/5
                 </span>
                 {need.confidence && (
                   <span className="text-xs font-semibold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-200 shadow-sm capitalize">
-                    Conf: {need.confidence}
+                    {s.confLabel}: {need.confidence}
                   </span>
                 )}
               </div>
@@ -84,23 +84,25 @@ export function Results({
       {isUrgent && (
         <div className="rounded-xl border-l-4 border-uw-spirit-gold bg-amber-50 p-5 text-amber-900 shadow-sm">
           <strong className="block text-lg mb-1">{s.urgentTitle}</strong>
-          <p>
-            If you're in crisis, call the{' '}
+          <p className="mb-3">{s.urgentBody}</p>
+          <div className="flex flex-wrap gap-3">
             <a
               href="https://wellbeing.uw.edu/husky-helpline/"
-              className="font-bold underline hover:text-uw-husky-purple transition-colors"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center rounded-lg border border-amber-400 bg-amber-100 px-3 py-1.5 text-xs font-bold text-amber-900 hover:bg-amber-200 transition-colors"
             >
-              Husky HelpLine
-            </a>{' '}
-            (24/7) or{' '}
+              Husky HelpLine (24/7) ↗
+            </a>
             <a
               href="https://www.washington.edu/safecampus/"
-              className="font-bold underline hover:text-uw-husky-purple transition-colors"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center rounded-lg border border-amber-400 bg-amber-100 px-3 py-1.5 text-xs font-bold text-amber-900 hover:bg-amber-200 transition-colors"
             >
-              SafeCampus
+              SafeCampus ↗
             </a>
-            .
-          </p>
+          </div>
         </div>
       )}
 
@@ -146,6 +148,7 @@ export function Results({
               vote={feedback[rec.resource.id]}
               onVote={(helpful) => onFeedback(rec.resource.id, helpful)}
               advisorMode={advisorMode}
+              s={s}
             />
           ))}
         </ul>

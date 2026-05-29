@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { CATEGORY_LABELS, type Recommendation } from '@/lib/types';
+import type { getStrings } from '@/lib/i18n';
 import { ShareButton } from './ShareButton';
 import { FeedbackButtons } from './FeedbackButtons';
 
@@ -8,11 +9,13 @@ export function ResourceCard({
   vote,
   onVote,
   advisorMode = false,
+  s,
 }: {
   rec: Recommendation;
   vote: 'helpful' | 'not_helpful' | undefined;
   onVote: (helpful: boolean) => void;
   advisorMode?: boolean;
+  s: ReturnType<typeof getStrings>;
 }) {
   return (
     <li className="group rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm transition-all hover:shadow-md hover:border-uw-spirit-purple/30">
@@ -28,21 +31,21 @@ export function ResourceCard({
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
             <span className="w-2 h-2 rounded-full bg-uw-accent-teal" />
-            {CATEGORY_LABELS[rec.resource.category]} · {Math.round(rec.score * 100)}% match
+            {CATEGORY_LABELS[rec.resource.category]} · {Math.round(rec.score * 100)}% {s.matchPct}
           </span>
           <Link
             href={`/resources/${rec.resource.id}`}
             className="inline-flex items-center rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 hover:text-uw-husky-purple transition-colors"
           >
-            About
+            {s.aboutResourceLink}
           </Link>
-          <ShareButton rec={rec} />
+          <ShareButton rec={rec} s={s} />
         </div>
       </div>
 
       {advisorMode && rec.scores && (
         <div className="mb-4 rounded-xl border border-uw-husky-purple/20 bg-uw-accent-lavender/10 p-3">
-          <p className="text-xs font-bold text-uw-husky-purple mb-2 uppercase tracking-wider">Score breakdown</p>
+          <p className="text-xs font-bold text-uw-husky-purple mb-2 uppercase tracking-wider">{s.scoreBreakdown}</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {(
               [
@@ -87,7 +90,7 @@ export function ResourceCard({
       )}
 
       <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-        <FeedbackButtons vote={vote} onVote={onVote} />
+        <FeedbackButtons vote={vote} onVote={onVote} s={s} />
       </div>
     </li>
   );

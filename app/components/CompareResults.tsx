@@ -58,13 +58,14 @@ export function CompareResults({
                       <FeedbackButtons
                         vote={feedback[rec.resource.id]}
                         onVote={(helpful) => onFeedback(rec.resource.id, helpful)}
+                        s={s}
                       />
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-slate-400 italic">No results</p>
+              <p className="text-sm text-slate-400 italic">{s.noResults}</p>
             )}
           </div>
         ))}

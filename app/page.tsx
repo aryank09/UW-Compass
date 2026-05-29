@@ -13,19 +13,6 @@ import { SkeletonResults, SkeletonRecommendations } from './components/SkeletonR
 import { Results, NeedsSection } from './components/Results';
 import { CompareResults } from './components/CompareResults';
 
-const EXAMPLES = [
-  'I am stressed, behind in math, and need somewhere quiet to study.',
-  'I commute from Lynnwood and need help paying for the bus.',
-  'I am running out of money for groceries and rent is due next week.',
-  "I am a transfer student looking for an internship but my resume is rough.",
-];
-
-const CAMPUS_OPTIONS: { value: Campus; label: string }[] = [
-  { value: 'all', label: 'All campuses' },
-  { value: 'seattle', label: 'Seattle' },
-  { value: 'bothell', label: 'Bothell' },
-  { value: 'tacoma', label: 'Tacoma' },
-];
 
 // ---------------------------------------------------------------------------
 // Stream parsing helpers
@@ -108,13 +95,24 @@ export default function Home() {
   const [compareLoading, setCompareLoading] = useState(false);
   const [shareQuery, setShareQuery] = useState(false);
   const [galleryQueries, setGalleryQueries] = useState<string[]>([]);
-  const [locale, setLocale] = useState<Locale>('en');
+  const [locale, setLocale] = useSafeLocalStorage<Locale>('uw-compass-locale', 'en');
   const [advisorMode, setAdvisorMode] = useState(false);
 
   const s = getStrings(locale);
 
+  const campusOptions: { value: Campus; label: string }[] = [
+    { value: 'all', label: s.campusAll },
+    { value: 'seattle', label: 'Seattle' },
+    { value: 'bothell', label: 'Bothell' },
+    { value: 'tacoma', label: 'Tacoma' },
+  ];
+
+  const examples = [s.ex1, s.ex2, s.ex3, s.ex4];
+
   useEffect(() => {
-    setLocale(detectLocale());
+    // Only auto-detect if user hasn't previously chosen a locale
+    const stored = localStorage.getItem('uw-compass-locale');
+    if (!stored) setLocale(detectLocale());
     const params = new URLSearchParams(window.location.search);
     if (params.get('advisor') === '1') setAdvisorMode(true);
     fetch('/api/gallery')
@@ -196,8 +194,7 @@ export default function Home() {
         <div className="mb-6 rounded-xl border border-uw-husky-purple/30 bg-uw-accent-lavender/20 px-5 py-3 flex items-center gap-3">
           <span className="text-sm font-bold text-uw-husky-purple">{s.advisorMode}</span>
           <span className="text-xs text-slate-600">
-            Full scores and all resources are returned. Add{' '}
-            <code className="bg-slate-100 px-1 rounded">?advisor=1</code> to the URL to stay in this mode.
+            {s.advisorBannerDetail}
           </span>
         </div>
       )}
@@ -222,13 +219,12 @@ export default function Home() {
             </div>
           </div>
           <p className="text-lg text-slate-600 max-w-xl">
-            An AI resource finder for UW students. Describe what's going on, and we'll point you to the right
-            campus resources and a clear next step.
+            {s.heroTagline}
           </p>
         </div>
         <div className="mt-4 flex items-center justify-center gap-4">
           <Link
-            href="/about"
+            href={`/about?locale=${locale}`}
             className="text-sm font-medium text-uw-spirit-purple hover:text-uw-husky-purple hover:underline transition-colors"
           >
             {s.aboutLink}
@@ -272,7 +268,7 @@ export default function Home() {
                   disabled={loading}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm shadow-sm focus:border-uw-spirit-purple focus:outline-none focus:ring-4 focus:ring-uw-spirit-purple/20 transition-all"
                 >
-                  {CAMPUS_OPTIONS.map((opt) => (
+                  {campusOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>
@@ -287,7 +283,7 @@ export default function Home() {
                 aria-label={s.campusLabel}
                 className="hidden min-[480px]:flex flex-wrap gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 text-sm"
               >
-                {CAMPUS_OPTIONS.map((opt) => {
+                {campusOptions.map((opt) => {
                   const active = campus === opt.value;
                   return (
                     <button
@@ -329,7 +325,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex flex-wrap gap-2 flex-1">
-              {EXAMPLES.map((ex) => (
+              {examples.map((ex) => (
                 <button
                   key={ex}
                   type="button"
@@ -419,17 +415,7 @@ export default function Home() {
       </div>
 
       <footer className="mt-12 border-t border-slate-200 pt-6 text-xs text-slate-500">
-        UW Compass is a CSS 382 student project. It surfaces official UW resources but is not a substitute for
-        them. For emergencies, call 911 or contact{' '}
-        <a
-          href="https://www.washington.edu/safecampus/"
-          target="_blank"
-          rel="noreferrer"
-          className="underline"
-        >
-          SafeCampus
-        </a>
-        .
+        {s.footerDisclaimer}
       </footer>
     </main>
   );
