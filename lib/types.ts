@@ -1,3 +1,28 @@
+export interface TokenUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}
+
+/** Additive helper — safe to call with undefined operands. */
+export function addUsage(a: TokenUsage, b?: TokenUsage | null): TokenUsage {
+  if (!b) return a;
+  return {
+    prompt_tokens: a.prompt_tokens + b.prompt_tokens,
+    completion_tokens: a.completion_tokens + b.completion_tokens,
+    total_tokens: a.total_tokens + b.total_tokens,
+  };
+}
+
+export const ZERO_USAGE: TokenUsage = { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
+
+/** Optional persona context the student (or the UI) can supply. */
+export interface StudentContext {
+  year?: 'freshman' | 'sophomore' | 'junior' | 'senior' | 'graduate' | 'transfer';
+  commuter?: boolean;
+  first_gen?: boolean;
+}
+
 export const CATEGORIES = [
   'academic',
   'wellness',
@@ -64,6 +89,8 @@ export interface Recommendation {
   matched_needs: Category | null;
   matched_tags: string[];
   why: string;
+  /** 1–3 word quote from the student's own input that grounded this recommendation. */
+  evidence_quote?: string;
   /** Populated when the request is made in advisor mode. */
   scores?: ResourceScores;
 }
@@ -84,4 +111,10 @@ export interface RecommendResponse {
   next_steps: string[];
   /** Present only when advisor=true is sent in the request. */
   advisorData?: AdvisorData;
+  /** Cost and latency metadata; always present in advisor mode, omitted in production cache hits. */
+  meta?: {
+    tokens: TokenUsage;
+    latency_ms: number;
+    ranker: 'cosine' | 'llm' | 'hybrid';
+  };
 }
