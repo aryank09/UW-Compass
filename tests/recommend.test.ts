@@ -75,8 +75,8 @@ describe('rank', () => {
       makeResource('b', { embedding: [0.1, 0, 0], tags: ['math'] }),
       makeResource('c', { embedding: [0, 1, 0], category: 'career' }),
     ];
-    const ranked = rank([1, 0, 0], needs, resources, { topK: 3 });
-    expect(ranked[0].resource.id).toBe('a');
+    const { recommendations } = rank([1, 0, 0], needs, resources, { topK: 3 });
+    expect(recommendations[0].resource.id).toBe('a');
   });
 
   it('boosts urgent resources only when the student is urgent', () => {
@@ -95,8 +95,8 @@ describe('rank', () => {
         embedding: [0.5, 0.5, 0.5],
       }),
     ];
-    const ranked = rank([0.3, 0.3, 0.3], urgentNeeds, resources, { topK: 2 });
-    expect(ranked[0].resource.id).toBe('crisis');
+    const { recommendations } = rank([0.3, 0.3, 0.3], urgentNeeds, resources, { topK: 2 });
+    expect(recommendations[0].resource.id).toBe('crisis');
   });
 
   it('diversifies categories — no more than 2 from the same category in the top K', () => {
@@ -107,8 +107,8 @@ describe('rank', () => {
       makeResource('a4', { category: 'academic', embedding: [0.97, 0, 0] }),
       makeResource('w1', { category: 'wellness', embedding: [0.5, 0, 0] }),
     ];
-    const ranked = rank([1, 0, 0], needs, resources, { topK: 3 });
-    const academicCount = ranked.filter((r) => r.resource.category === 'academic').length;
+    const { recommendations } = rank([1, 0, 0], needs, resources, { topK: 3 });
+    const academicCount = recommendations.filter((r) => r.resource.category === 'academic').length;
     expect(academicCount).toBeLessThanOrEqual(2);
   });
 
@@ -118,7 +118,7 @@ describe('rank', () => {
         tags: ['math', 'calculus', 'tutoring', 'unrelated'],
       }),
     ];
-    const ranked = rank([1, 0, 0], needs, resources, { topK: 1 });
-    expect(ranked[0].matched_tags.sort()).toEqual(['math', 'tutoring']);
+    const { recommendations } = rank([1, 0, 0], needs, resources, { topK: 1 });
+    expect(recommendations[0].matched_tags.sort()).toEqual(['math', 'tutoring']);
   });
 });

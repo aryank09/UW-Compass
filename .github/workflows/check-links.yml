@@ -1,0 +1,28 @@
+name: Weekly link health check
+
+on:
+  schedule:
+    # Every Monday at 09:00 UTC so the team sees results at the start of the work week.
+    - cron: '0 9 * * 1'
+  workflow_dispatch: # allow manual runs from the Actions UI
+
+jobs:
+  check-links:
+    name: Check resource URLs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run link checker
+        run: npm run check-links
+        # Non-zero exit = at least one dead link; the step failure will
+        # trigger a GitHub notification email to the repository owner.

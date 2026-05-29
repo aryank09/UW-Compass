@@ -1,4 +1,5 @@
 import {
+  AdvisorData,
   Category,
   ExtractedNeed,
   Recommendation,
@@ -32,6 +33,8 @@ export function resourceEmbeddingText(r: {
 
 interface RankOptions {
   topK: number;
+  /** When true, return all resources sorted by score with per-signal scores — no diversification cap. */
+  advisor?: boolean;
   weights: {
     embedding: number;
     categoryMatch: number;
@@ -40,14 +43,17 @@ interface RankOptions {
   };
 }
 
+export const DEFAULT_WEIGHTS: RankOptions['weights'] = {
+  embedding: 0.5,
+  categoryMatch: 0.25,
+  tagOverlap: 0.15,
+  urgencyBoost: 0.1,
+};
+
 const DEFAULT_OPTIONS: RankOptions = {
   topK: 5,
-  weights: {
-    embedding: 0.5,
-    categoryMatch: 0.25,
-    tagOverlap: 0.15,
-    urgencyBoost: 0.1,
-  },
+  advisor: false,
+  weights: DEFAULT_WEIGHTS,
 };
 
 export function rank(
@@ -55,29 +61,31 @@ export function rank(
   needs: ExtractedNeed[],
   resources: ResourceWithEmbedding[],
   options: Partial<RankOptions> = {}
-): Recommendation[] {
-  const opts: RankOptions = { ...DEFAULT_OPTIONS, ...options, weights: { ...DEFAULT_OPTIONS.weights, ...(options.weights ?? {}) } };
+): { recommendations: Recommendation[]; advisorData?: AdvisorData } {
+  const opts: RankOptions = {
+    ...DEFAULT_OPTIONS,
+    ...options,
+    weights: { ...DEFAULT_OPTIONS.weights, ...(options.weights ?? {}) },
+  };
   const neededCategories = new Set<Category>(needs.map((n) => n.category));
   const neededTags = new Set<string>(needs.flatMap((n) => n.tags));
   const studentIsUrgent = needs.some((n) => n.urgent);
 
   const scored: Recommendation[] = resources.map((r) => {
     const sim = cosineSimilarity(inputEmbedding, r.embedding);
-    // Normalize cosine from [-1,1] to [0,1]; in practice OpenAI embeddings live ~[0,1] already.
+    // Normalize cosine from [-1,1] to [0,1]; OpenAI embeddings live ~[0,1] already.
     const normSim = (sim + 1) / 2;
 
-    const categoryMatch = neededCategories.has(r.category) ? 1 : 0;
-
+    const categoryScore = neededCategories.has(r.category) ? 1 : 0;
     const matchedTags = r.tags.filter((t) => neededTags.has(t));
-    const tagOverlap = neededTags.size === 0 ? 0 : matchedTags.length / neededTags.size;
-
-    const urgencyBoost = studentIsUrgent && r.urgent ? 1 : 0;
+    const tagScore = neededTags.size === 0 ? 0 : matchedTags.length / neededTags.size;
+    const urgencyScore = studentIsUrgent && r.urgent ? 1 : 0;
 
     const score =
       opts.weights.embedding * normSim +
-      opts.weights.categoryMatch * categoryMatch +
-      opts.weights.tagOverlap * tagOverlap +
-      opts.weights.urgencyBoost * urgencyBoost;
+      opts.weights.categoryMatch * categoryScore +
+      opts.weights.tagOverlap * tagScore +
+      opts.weights.urgencyBoost * urgencyScore;
 
     return {
       resource: {
@@ -92,15 +100,23 @@ export function rank(
       },
       score,
       embedding_similarity: sim,
-      matched_needs: neededCategories.has(r.category) ? [r.category] : [],
+      matched_needs: neededCategories.has(r.category) ? r.category : null,
       matched_tags: matchedTags,
       why: '', // filled in by the summarizer
+      scores: { embedding: normSim, category: categoryScore, tags: tagScore, urgency: urgencyScore },
     };
   });
 
   scored.sort((a, b) => b.score - a.score);
 
-  // Diversify: avoid more than 2 results from the same category in the top K when we have variety.
+  if (opts.advisor) {
+    return {
+      recommendations: scored.slice(0, opts.topK),
+      advisorData: { allResults: scored, weights: opts.weights },
+    };
+  }
+
+  // Diversify: cap at 2 resources per category in the top K.
   const final: Recommendation[] = [];
   const perCategory = new Map<Category, number>();
   for (const rec of scored) {
@@ -110,14 +126,16 @@ export function rank(
     perCategory.set(rec.resource.category, c + 1);
     if (final.length >= opts.topK) break;
   }
-  // If diversification left us short, top up from the original sorted list.
+  // Top up if diversification left us short.
   if (final.length < opts.topK) {
+    const finalIds = new Set(final.map((r) => r.resource.id));
     for (const rec of scored) {
-      if (final.includes(rec)) continue;
+      if (finalIds.has(rec.resource.id)) continue;
       final.push(rec);
+      finalIds.add(rec.resource.id);
       if (final.length >= opts.topK) break;
     }
   }
 
-  return final;
+  return { recommendations: final };
 }
