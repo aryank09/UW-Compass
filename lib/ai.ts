@@ -60,6 +60,11 @@ const NEED_EXTRACTION_TOOL = {
                 description:
                   '1 = passing mention, 5 = primary crisis-level need. Use language cues (e.g. "failing", "overwhelmed") to gauge.',
               },
+              confidence: {
+                type: 'string',
+                enum: ['high', 'medium', 'low'],
+                description: 'Confidence that this need is accurate based on the text.',
+              },
               evidence: {
                 type: 'string',
                 description: 'Short quote or paraphrase from the input that justifies this need.',
@@ -76,7 +81,7 @@ const NEED_EXTRACTION_TOOL = {
                   'True only if the student appears in crisis or describes a time-critical situation (safety, immediate housing/food, suicidal ideation, etc.).',
               },
             },
-            required: ['category', 'intensity', 'evidence', 'tags', 'urgent'],
+            required: ['category', 'intensity', 'confidence', 'evidence', 'tags', 'urgent'],
             additionalProperties: false,
           },
         },

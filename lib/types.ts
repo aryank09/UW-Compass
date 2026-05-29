@@ -41,6 +41,7 @@ export interface ResourceWithEmbedding extends Resource {
 export interface ExtractedNeed {
   category: Category;
   intensity: 1 | 2 | 3 | 4 | 5;
+  confidence: 'high' | 'medium' | 'low';
   evidence: string;
   tags: string[];
   urgent: boolean;

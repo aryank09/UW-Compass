@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CATEGORY_LABELS, type Campus, type RecommendResponse } from '@/lib/types';
+import { CATEGORY_LABELS, type Campus, type RecommendResponse, type Recommendation } from '@/lib/types';
 
 const EXAMPLES = [
   'I am stressed, behind in math, and need somewhere quiet to study.',
@@ -24,6 +24,33 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<RecommendResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const savedInput = localStorage.getItem('uw-compass-input');
+      const savedCampus = localStorage.getItem('uw-compass-campus');
+      const savedData = localStorage.getItem('uw-compass-data');
+      if (savedInput) setInput(savedInput);
+      if (savedCampus) setCampus(savedCampus as Campus);
+      if (savedData) setData(JSON.parse(savedData));
+    } catch (err) {
+      console.error('Failed to load from local storage', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('uw-compass-input', input);
+      localStorage.setItem('uw-compass-campus', campus);
+      if (data) {
+        localStorage.setItem('uw-compass-data', JSON.stringify(data));
+      } else {
+        localStorage.removeItem('uw-compass-data');
+      }
+    } catch (err) {
+      console.error('Failed to save to local storage', err);
+    }
+  }, [input, campus, data]);
 
   async function submit(e?: React.FormEvent) {
     e?.preventDefault();
@@ -70,14 +97,31 @@ export default function Home() {
 
       <div className="relative bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-8">
         <form onSubmit={submit} className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col min-[480px]:flex-row min-[480px]:items-center justify-between gap-4">
             <label htmlFor="input" className="block text-base font-semibold text-slate-800">
               What do you need help with?
             </label>
+
+            <div className="block min-[480px]:hidden w-full">
+              <select
+                aria-label="Campus filter"
+                value={campus}
+                onChange={(e) => setCampus(e.target.value as Campus)}
+                disabled={loading}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm shadow-sm focus:border-uw-spirit-purple focus:outline-none focus:ring-4 focus:ring-uw-spirit-purple/20 transition-all"
+              >
+                {CAMPUS_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div
               role="radiogroup"
               aria-label="Campus filter"
-              className="flex flex-wrap gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 text-sm"
+              className="hidden min-[480px]:flex flex-wrap gap-1 rounded-full border border-slate-200 bg-slate-50 p-1 text-sm"
             >
               {CAMPUS_OPTIONS.map((opt) => {
                 const active = campus === opt.value;
@@ -133,20 +177,19 @@ export default function Home() {
             </button>
           </div>
         </form>
-        {loading && (
-          <div className="absolute bottom-[1px] left-[1px] right-[1px] h-1.5 overflow-hidden rounded-b-[15px] bg-slate-200">
-            <div className="h-full w-1/2 bg-uw-husky-purple animate-indeterminate"></div>
-          </div>
-        )}
       </div>
 
-      {error && (
-        <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-          {error}
-        </div>
-      )}
+      <div aria-live="polite">
+        {loading && <SkeletonResults />}
 
-      {data && <Results data={data} />}
+        {error && (
+          <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+            {error}
+          </div>
+        )}
+
+        {data && <Results data={data} />}
+      </div>
 
       <footer className="mt-12 border-t border-slate-200 pt-6 text-xs text-slate-500">
         UW Compass is a CSS 382 student project. It surfaces official UW resources but is not a
@@ -162,6 +205,90 @@ export default function Home() {
         .
       </footer>
     </main>
+  );
+}
+
+function ShareButton({ rec }: { rec: Recommendation }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const text = `Check out this UW resource:\n${rec.resource.name} - ${rec.resource.url}\n\n${rec.resource.description}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy', err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleShare}
+      className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-uw-husky-purple"
+      aria-label="Copy resource to clipboard"
+    >
+      {copied ? (
+        <>
+          <svg className="h-3.5 w-3.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+          </svg>
+          Copied!
+        </>
+      ) : (
+        <>
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+          </svg>
+          Share
+        </>
+      )}
+    </button>
+  );
+}
+
+function SkeletonResults() {
+  return (
+    <section className="mt-12 space-y-10 animate-pulse" aria-hidden="true">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div className="h-4 w-32 bg-slate-200 rounded mb-5"></div>
+        <div className="space-y-3">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-16 bg-slate-100 rounded-xl w-full"></div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div className="h-4 w-48 bg-slate-200 rounded mb-5"></div>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex gap-4">
+              <div className="h-8 w-8 rounded-full bg-slate-200 flex-none"></div>
+              <div className="h-4 bg-slate-100 rounded w-full mt-2"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="h-4 w-48 bg-slate-200 rounded mb-5 px-2"></div>
+        <div className="grid grid-cols-1 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+              <div className="flex justify-between mb-4">
+                <div className="h-6 w-1/3 bg-slate-200 rounded"></div>
+                <div className="h-6 w-24 bg-slate-100 rounded"></div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-4 bg-slate-100 rounded w-full"></div>
+                <div className="h-4 bg-slate-100 rounded w-5/6"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -202,13 +329,31 @@ function Results({ data }: { data: RecommendResponse }) {
                 key={i}
                 className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-xl border border-slate-100 bg-slate-50 p-4 transition-colors hover:bg-slate-100"
               >
-                <span className="inline-flex w-fit items-center rounded-full bg-uw-accent-lavender/30 px-3 py-1 text-xs font-bold text-uw-spirit-purple">
+                <span className="inline-flex w-fit items-center rounded-full bg-uw-accent-lavender/30 px-3 py-1 text-xs font-bold text-uw-husky-purple shrink-0">
                   {CATEGORY_LABELS[need.category]}
                 </span>
-                <span className="flex-1 text-base text-slate-700 font-medium">"{need.evidence}"</span>
-                <span className="text-xs font-semibold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-200 shadow-sm">
-                  Intensity: {need.intensity}/5
-                </span>
+                <div className="flex-1">
+                  <span className="block text-base text-slate-700 font-medium mb-1.5">"{need.evidence}"</span>
+                  {need.tags && need.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {need.tags.map((t) => (
+                        <span key={t} className="px-2 py-0.5 rounded-md bg-slate-200/70 border border-slate-200/80 text-slate-500 text-[10px] font-semibold uppercase tracking-wider">
+                          {t.replace(/_/g, ' ')}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-row sm:flex-col gap-2 sm:gap-1 shrink-0">
+                  <span className="text-xs font-semibold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-200 shadow-sm">
+                    Intensity: {need.intensity}/5
+                  </span>
+                  {need.confidence && (
+                    <span className="text-xs font-semibold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-200 shadow-sm capitalize">
+                      Conf: {need.confidence}
+                    </span>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
@@ -253,10 +398,13 @@ function Results({ data }: { data: RecommendResponse }) {
                 >
                   {rec.resource.name}
                 </a>
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
-                  <span className="w-2 h-2 rounded-full bg-uw-accent-teal"></span>
-                  {CATEGORY_LABELS[rec.resource.category]} · {Math.round(rec.score * 100)}% match
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+                    <span className="w-2 h-2 rounded-full bg-uw-accent-teal"></span>
+                    {CATEGORY_LABELS[rec.resource.category]} · {Math.round(rec.score * 100)}% match
+                  </span>
+                  <ShareButton rec={rec} />
+                </div>
               </div>
               {rec.why && (
                 <div className="mb-4 rounded-xl bg-uw-husky-gold-web/30 p-4 border border-uw-husky-gold-web/50">
