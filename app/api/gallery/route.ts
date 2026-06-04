@@ -18,7 +18,13 @@ export async function GET() {
   if (process.env.KV_REST_API_URL) {
     try {
       const { kv } = await import('@vercel/kv');
-      const queries = (await kv.lrange('gallery:queries', 0, 9)) as string[];
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('KV timeout')), 3000)
+      );
+      const queries = (await Promise.race([
+        kv.lrange('gallery:queries', 0, 9),
+        timeout,
+      ])) as string[];
       if (queries.length > 0) {
         return NextResponse.json({ queries });
       }
