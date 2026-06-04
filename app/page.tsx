@@ -172,9 +172,15 @@ export default function Home() {
           setPartialNeeds(null);
         }
       );
-      // If the query was shared to the gallery, the server has just written it;
-      // refresh so the "recent questions" list reflects it without a reload.
-      if (shareQuery) refreshGallery();
+      // Optimistically add to gallery immediately, then sync from server
+      if (shareQuery && input.trim().length > 20) {
+        setGalleryQueries((prev) => {
+          const updated = [input.trim(), ...prev.filter((q) => q !== input.trim())];
+          return updated.slice(0, 6);
+        });
+        // Sync in background after a short delay to allow the server write to finish
+        setTimeout(refreshGallery, 1500);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
       setPartialNeeds(null);
