@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 
+const GALLERY_KEY = 'gallery:queries';
+
 /** Seed queries shown when no user-contributed queries exist yet. */
 const SEED_QUERIES = [
   "I'm overwhelmed with finals and struggling with my mental health.",
@@ -14,26 +16,40 @@ const SEED_QUERIES = [
   "I need help with FAFSA — I don't understand what forms to fill out.",
 ];
 
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), ms)
+  );
+  return Promise.race([promise, timeout]);
+}
+
 export async function GET() {
+  // Option A: Vercel KV / Upstash REST API
   if (process.env.KV_REST_API_URL) {
     try {
       const { kv } = await import('@vercel/kv');
-      const timeout = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('KV timeout')), 3000)
-      );
-      const queries = (await Promise.race([
-        kv.lrange('gallery:queries', 0, 9),
-        timeout,
-      ])) as string[];
-      if (queries.length > 0) {
-        return NextResponse.json({ queries });
-      }
+      const queries = (await withTimeout(kv.lrange(GALLERY_KEY, 0, 9), 3000)) as string[];
+      if (queries.length > 0) return NextResponse.json({ queries });
     } catch (err) {
       console.error('[/api/gallery] KV read failed:', err);
     }
   }
 
-  // Local dev fallback: read from data/gallery.jsonl if it exists
+  // Option B: Standard Redis via REDIS_URL (any provider)
+  if (process.env.REDIS_URL) {
+    try {
+      const { createClient } = await import('redis');
+      const client = createClient({ url: process.env.REDIS_URL });
+      await withTimeout(client.connect(), 3000);
+      const queries = await withTimeout(client.lRange(GALLERY_KEY, 0, 9), 3000);
+      await client.disconnect();
+      if (queries.length > 0) return NextResponse.json({ queries });
+    } catch (err) {
+      console.error('[/api/gallery] Redis read failed:', err);
+    }
+  }
+
+  // Option C: Local dev — read from data/gallery.jsonl
   try {
     const { existsSync, readFileSync } = await import('fs');
     const { join } = await import('path');
@@ -43,10 +59,7 @@ export async function GET() {
         .split('\n')
         .map((l) => l.trim())
         .filter(Boolean);
-      if (lines.length > 0) {
-        // Most-recent first, capped at 10
-        return NextResponse.json({ queries: lines.slice(-10).reverse() });
-      }
+      if (lines.length > 0) return NextResponse.json({ queries: lines.slice(-10).reverse() });
     }
   } catch (err) {
     console.error('[/api/gallery] local file read failed:', err);

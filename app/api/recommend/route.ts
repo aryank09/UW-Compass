@@ -363,6 +363,13 @@ export async function POST(req: NextRequest) {
             const { kv } = await import('@vercel/kv');
             await kv.lpush('gallery:queries', safe);
             await kv.ltrim('gallery:queries', 0, 49);
+          } else if (process.env.REDIS_URL) {
+            const { createClient } = await import('redis');
+            const client = createClient({ url: process.env.REDIS_URL });
+            await client.connect();
+            await client.lPush('gallery:queries', safe);
+            await client.lTrim('gallery:queries', 0, 49);
+            await client.disconnect();
           } else {
             const { appendFileSync } = await import('fs');
             const { join } = await import('path');
