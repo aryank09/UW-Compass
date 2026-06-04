@@ -362,18 +362,15 @@ export async function POST(req: NextRequest) {
           if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
             const { supabase } = await import('@/lib/supabase');
             await supabase.from('gallery_queries').insert({ query: safe });
-            // Keep only the 50 most recent entries
-            const { data: oldest } = await supabase
+            // Keep only the 50 most recent entries — fetch IDs beyond rank 50 and delete them
+            const { data: overflow } = await supabase
               .from('gallery_queries')
               .select('id')
-              .order('created_at', { ascending: true })
-              .limit(1)
-              .range(50, 50);
-            if (oldest && oldest.length > 0) {
-              await supabase
-                .from('gallery_queries')
-                .delete()
-                .lt('created_at', oldest[0].created_at);
+              .order('created_at', { ascending: false })
+              .range(50, 9999);
+            if (overflow && overflow.length > 0) {
+              const ids = overflow.map((r: { id: string }) => r.id);
+              await supabase.from('gallery_queries').delete().in('id', ids);
             }
           } else {
             const { appendFileSync } = await import('fs');
