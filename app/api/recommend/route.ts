@@ -359,17 +359,22 @@ export async function POST(req: NextRequest) {
       if (shareQuery && input.length > 20) {
         const safe = sanitizeQuery(input);
         try {
-          if (process.env.KV_REST_API_URL) {
-            const { kv } = await import('@vercel/kv');
-            await kv.lpush('gallery:queries', safe);
-            await kv.ltrim('gallery:queries', 0, 49);
-          } else if (process.env.REDIS_URL) {
-            const { createClient } = await import('redis');
-            const client = createClient({ url: process.env.REDIS_URL });
-            await client.connect();
-            await client.lPush('gallery:queries', safe);
-            await client.lTrim('gallery:queries', 0, 49);
-            await client.disconnect();
+          if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+            const { supabase } = await import('@/lib/supabase');
+            await supabase.from('gallery_queries').insert({ query: safe });
+            // Keep only the 50 most recent entries
+            const { data: oldest } = await supabase
+              .from('gallery_queries')
+              .select('id')
+              .order('created_at', { ascending: true })
+              .limit(1)
+              .range(50, 50);
+            if (oldest && oldest.length > 0) {
+              await supabase
+                .from('gallery_queries')
+                .delete()
+                .lt('created_at', oldest[0].created_at);
+            }
           } else {
             const { appendFileSync } = await import('fs');
             const { join } = await import('path');

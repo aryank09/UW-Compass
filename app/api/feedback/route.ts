@@ -40,16 +40,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
   }
 
-  const entry = JSON.stringify({ ...parsed.data, ts: Date.now() });
+  const { resourceId, query, campus, helpful } = parsed.data;
 
   try {
-    if (process.env.KV_REST_API_URL) {
-      const { kv } = await import('@vercel/kv');
-      const date = new Date().toISOString().slice(0, 10);
-      await kv.rpush(`feedback:${date}`, entry);
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      const { supabase } = await import('@/lib/supabase');
+      const { error } = await supabase
+        .from('feedback')
+        .insert({ resource_id: resourceId, query, campus, helpful });
+
+      if (error) throw error;
     } else {
       const { appendFileSync } = await import('fs');
       const { join } = await import('path');
+      const entry = JSON.stringify({ resourceId, query, campus, helpful, ts: Date.now() });
       appendFileSync(join(process.cwd(), 'data', 'feedback.jsonl'), entry + '\n', 'utf-8');
     }
   } catch (err) {
