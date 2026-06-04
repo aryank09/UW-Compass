@@ -17,7 +17,7 @@ npm run seed                      # generates embeddings for the curated resourc
 npm run dev                       # http://localhost:3000
 ```
 
-You need an [OpenAI API key](https://platform.openai.com/api-keys) **with billing enabled**. Seeding all 31 resources costs a fraction of a cent on `text-embedding-3-small`.
+You need an [OpenAI API key](https://platform.openai.com/api-keys) **with billing enabled**. Seeding all 45 resources costs a fraction of a cent on `text-embedding-3-small`.
 
 ## What it does
 
@@ -226,6 +226,14 @@ create table feedback (
   helpful boolean not null,
   created_at timestamptz not null default now()
 );
+
+-- L2 persistent cache: keyed by sha256(input+campus), stores the full
+-- RecommendResponse as JSONB so repeat queries skip the OpenAI pipeline.
+create table query_cache (
+  cache_key text primary key,
+  response   jsonb not null,
+  created_at timestamptz not null default now()
+);
 ```
 
 If your GitHub account doesn't own the repo, the CLI alternative (`vercel login && vercel --prod`) works from any clone.
@@ -240,7 +248,7 @@ If your GitHub account doesn't own the repo, the CLI alternative (`vercel login 
 
 ### Done
 
-- [x] 31 curated resources across all 7 proposal categories
+- [x] 45 curated resources across all 7 proposal categories (Seattle, Bothell, Tacoma)
 - [x] OpenAI embedding + need-extraction + summarization pipeline
 - [x] Ranked recommendations with multi-signal scoring + category diversification
 - [x] Single-page React UI with example prompts, urgent banner, next-step plan
