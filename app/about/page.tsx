@@ -98,7 +98,7 @@ export default async function AboutPage({
 
         {/* Modern Flowchart */}
         <div className="my-8 p-6 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm overflow-x-auto">
-          <div className="min-w-[600px] flex flex-col items-center gap-4 text-sm">
+          <div className="min-w-[640px] flex flex-col items-center gap-4 text-sm">
             {/* Browser */}
             <div className="flex flex-col items-center">
               <div className="bg-white border-2 border-uw-husky-purple text-uw-husky-purple font-bold px-6 py-3 rounded-xl shadow-sm">
@@ -167,6 +167,33 @@ export default async function AboutPage({
                 {s.aboutFlowRender}
               </div>
             </div>
+
+            {/* Supabase side flows */}
+            <div className="w-full max-w-2xl mt-2 border-t border-slate-200 pt-6">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest text-center mb-4">Supabase (Postgres) — gallery &amp; feedback</p>
+              <div className="flex gap-4 justify-center flex-wrap">
+                <div className="flex flex-col items-center gap-2 flex-1 min-w-[180px]">
+                  <div className="text-xs font-mono text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                    GET /api/gallery
+                  </div>
+                  <div className="h-5 w-0.5 bg-slate-300"></div>
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 text-center w-full">
+                    <div className="font-semibold text-emerald-700 text-xs mb-0.5">gallery_queries</div>
+                    <div className="text-[10px] text-slate-500">10 most recent shared queries → chips shown on page load</div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-2 flex-1 min-w-[180px]">
+                  <div className="text-xs font-mono text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                    POST /api/feedback
+                  </div>
+                  <div className="h-5 w-0.5 bg-slate-300"></div>
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 text-center w-full">
+                    <div className="font-semibold text-emerald-700 text-xs mb-0.5">feedback</div>
+                    <div className="text-[10px] text-slate-500">one row per helpful / not-helpful vote</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -181,7 +208,7 @@ export default async function AboutPage({
           <Tech name={s.aboutTechApi} detail="Next.js Route Handlers (Node runtime)" />
           <Tech name={s.aboutTechEmbeddings} detail="OpenAI text-embedding-3-small (1536 dim)" />
           <Tech name={s.aboutTechNeedExtraction} detail="OpenAI gpt-4o-mini + function calling (Zod-typed)" />
-          <Tech name={s.aboutTechStorage} detail={s.aboutTechStorageDetail} />
+          <Tech name={s.aboutTechStorage} detail={s.aboutTechStorageDetail} wide />
           <Tech name={s.aboutTechTesting} detail={s.aboutTechTestingDetail} />
           <Tech name={s.aboutTechHosting} detail={s.aboutTechHostingDetail} />
           <Tech name={s.aboutTechQuality} detail={s.aboutTechQualityDetail} />
@@ -312,9 +339,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function Tech({ name, detail }: { name: string; detail: string }) {
+function Tech({ name, detail, wide }: { name: string; detail: string; wide?: boolean }) {
   return (
-    <li className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+    <li className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow${wide ? ' sm:col-span-2' : ''}`}>
       <span className="block text-xs font-bold uppercase tracking-widest text-uw-heritage-gold mb-1.5">
         {name}
       </span>
