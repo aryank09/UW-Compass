@@ -233,12 +233,32 @@ export async function POST(req: NextRequest) {
 
   return ndjsonStream(
     async (emit) => {
-      // Cache hit — emit a single done event.
+      // L1: in-memory cache hit
       if (!bypassCache) {
         const cached = getCached(cacheKey);
         if (cached) {
           emit({ type: 'done', ...cached });
           return;
+        }
+      }
+
+      // L2: Supabase persistent cache hit
+      if (!bypassCache && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        try {
+          const { supabase } = await import('@/lib/supabase');
+          const { data } = await supabase
+            .from('query_cache')
+            .select('response')
+            .eq('cache_key', cacheKey)
+            .maybeSingle();
+          if (data?.response) {
+            const persisted = data.response as RecommendResponse;
+            setCached(cacheKey, persisted); // warm L1
+            emit({ type: 'done', ...persisted });
+            return;
+          }
+        } catch {
+          // cache unavailable — fall through to AI pipeline
         }
       }
 
@@ -354,6 +374,19 @@ export async function POST(req: NextRequest) {
       if (!bypassCache) setCached(cacheKey, response);
 
       emit({ type: 'done', ...response });
+
+      // Write to Supabase persistent cache (after response is sent to client)
+      if (!bypassCache && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        try {
+          const { supabase } = await import('@/lib/supabase');
+          await supabase.from('query_cache').upsert(
+            { cache_key: cacheKey, response: response as unknown as Record<string, unknown> },
+            { onConflict: 'cache_key' }
+          );
+        } catch (err) {
+          console.error('[/api/recommend] Cache write failed:', err);
+        }
+      }
 
       // Gallery opt-in
       if (shareQuery && input.length > 20) {
