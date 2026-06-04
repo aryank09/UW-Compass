@@ -4,8 +4,8 @@ An AI-powered resource finder for University of Washington students. Describe yo
 
 > CSS 382 — Introduction to Artificial Intelligence · DYOP group project
 
-- **App:** [uw-compass-c49yf22kw-aryank09s-projects.vercel.app](https://https://uw-compass-emgy1r8dt-aryank09s-projects.vercel.app/) — or run locally with `npm run dev`
-- **About / how it works:** [/about](https://uw-compass-c49yf22kw-aryank09s-projects.vercel.app/about) on the deployed app
+- **App:** [uw-compass-tau.vercel.app](https://uw-compass-tau.vercel.app/) — or run locally with `npm run dev`
+- **About / how it works:** [/about](https://uw-compass-tau.vercel.app/about) on the deployed app
 - **Repository:** https://github.com/aryank09/UW-Compass
 
 ## Quick start

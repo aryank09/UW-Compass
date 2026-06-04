@@ -130,6 +130,23 @@ function sanitizeQuery(q: string): string {
 
 type StreamEmit = (event: Record<string, unknown>) => void;
 
+// Classify a thrown pipeline error into a user-facing message. OpenAI SDK
+// errors expose a numeric `status` and a string `code`; a 429 (quota exhausted
+// or upstream rate limit) is transient and worth a distinct, friendlier note
+// than a generic failure.
+function errorMessageFor(err: unknown): string {
+  const e = err as { status?: number; code?: string } | null;
+  const status = e?.status;
+  const code = e?.code;
+  if (status === 429 || code === 'insufficient_quota' || code === 'rate_limit_exceeded') {
+    return 'The recommendation service is busy right now. Please wait a moment and try again.';
+  }
+  if (status === 401 || code === 'invalid_api_key') {
+    return 'The recommendation service is temporarily unavailable. Please try again later.';
+  }
+  return 'An error occurred. Please try again.';
+}
+
 function ndjsonStream(
   fn: (emit: StreamEmit) => Promise<void>,
   extraHeaders?: Record<string, string>
@@ -144,7 +161,7 @@ function ndjsonStream(
         await fn(emit);
       } catch (err) {
         console.error('[/api/recommend] pipeline error:', err);
-        emit({ type: 'error', error: 'An error occurred. Please try again.' });
+        emit({ type: 'error', error: errorMessageFor(err) });
       } finally {
         controller.close();
       }

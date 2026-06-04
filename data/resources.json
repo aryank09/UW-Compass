@@ -314,5 +314,145 @@
     "url": "https://www.washington.edu/financialaid/types-of-aid/scholarships/",
     "tags": ["scholarships", "merit", "need_based", "essay", "fafsa"],
     "urgent": false
+  },
+  {
+    "id": "uwb-learning-commons",
+    "name": "Learning Commons (UW Bothell)",
+    "category": "academic",
+    "campus": "bothell",
+    "description": "UW Bothell's academic support center, offering free peer tutoring in quantitative reasoning and writing along with academic success coaching and study-skills help.",
+    "url": "https://www.uwb.edu/learning-commons/",
+    "tags": ["tutoring", "writing", "math", "quantitative", "academic_support", "coaching"],
+    "urgent": false
+  },
+  {
+    "id": "uwb-counseling-center",
+    "name": "Counseling Center (UW Bothell)",
+    "category": "wellness",
+    "campus": "bothell",
+    "description": "Confidential mental-health counseling for UW Bothell students, including individual and group therapy, crisis support, and referrals to community providers.",
+    "url": "https://www.uwb.edu/well-being/counseling/",
+    "tags": ["counseling", "mental_health", "crisis", "wellness", "therapy"],
+    "urgent": true
+  },
+  {
+    "id": "uwb-husky-pantry",
+    "name": "Husky Pantry (UW Bothell)",
+    "category": "basic_needs",
+    "campus": "bothell",
+    "description": "Free food pantry for any enrolled UW Bothell student facing food insecurity, offering grocery staples and hygiene products at no cost and anonymously.",
+    "url": "https://www.uwb.edu/student-affairs/hawrc/basic-needs-programming/husky-pantry",
+    "tags": ["food_pantry", "basic_needs", "food_insecurity", "hygiene", "free"],
+    "urgent": false
+  },
+  {
+    "id": "uwb-transit-upass",
+    "name": "U-PASS / Commuter Services (UW Bothell)",
+    "category": "transportation",
+    "campus": "bothell",
+    "description": "Information on the U-PASS, loaded onto the Husky Card, giving UW Bothell students unlimited rides on regional buses, light rail, and commuter trains.",
+    "url": "https://www.uwb.edu/commuter-services/transportation/upass",
+    "tags": ["transit", "upass", "commuter", "bus", "light_rail", "transportation"],
+    "urgent": false
+  },
+  {
+    "id": "uwb-campus-library",
+    "name": "UW Bothell / Cascadia Campus Library",
+    "category": "study_space",
+    "campus": "bothell",
+    "description": "The shared UW Bothell and Cascadia College Campus Library, offering research help, study spaces, borrowing services, and technology access.",
+    "url": "https://library.uwb.edu/",
+    "tags": ["library", "study_space", "research", "books", "computers"],
+    "urgent": false
+  },
+  {
+    "id": "uwb-career-services",
+    "name": "Career Services (UW Bothell)",
+    "category": "career",
+    "campus": "bothell",
+    "description": "Career support for UW Bothell students and recent alumni: resume and cover-letter reviews, career advising, workshops, career fairs, and Handshake job listings.",
+    "url": "https://www.uwb.edu/career-services/",
+    "tags": ["career", "jobs", "internships", "resume", "advising", "handshake"],
+    "urgent": false
+  },
+  {
+    "id": "uwb-financial-aid",
+    "name": "Office of Financial Aid (UW Bothell)",
+    "category": "financial",
+    "campus": "bothell",
+    "description": "UW Bothell's financial aid office administers grants, loans, scholarships, and emergency aid, and helps students complete the FAFSA or WASFA.",
+    "url": "https://www.uwb.edu/financial-aid/",
+    "tags": ["financial_aid", "scholarships", "fafsa", "loans", "grants"],
+    "urgent": false
+  },
+  {
+    "id": "uwt-tlc-tutoring",
+    "name": "Teaching & Learning Center Tutoring (UW Tacoma)",
+    "category": "academic",
+    "campus": "tacoma",
+    "description": "Free tutoring for all UW Tacoma students through the Teaching & Learning Center, covering writing (in person, Zoom, or asynchronous) and quantitative subjects such as math, statistics, economics, and accounting.",
+    "url": "https://www.tacoma.uw.edu/tlc/tutoring-uw-tacoma",
+    "tags": ["tutoring", "writing", "math", "quantitative", "academic_support"],
+    "urgent": false
+  },
+  {
+    "id": "uwt-paws",
+    "name": "Psychological & Wellness Services (UW Tacoma)",
+    "category": "wellness",
+    "campus": "tacoma",
+    "description": "Psychological & Wellness Services (PAWS) offers confidential crisis, individual, and group counseling, educational workshops, and referrals at no additional cost to enrolled UW Tacoma students.",
+    "url": "https://www.tacoma.uw.edu/paws",
+    "tags": ["counseling", "mental_health", "crisis", "wellness", "therapy"],
+    "urgent": true
+  },
+  {
+    "id": "uwt-pantry",
+    "name": "The Pantry (UW Tacoma)",
+    "category": "basic_needs",
+    "campus": "tacoma",
+    "description": "The Pantry provides free supplemental, culturally relevant food and hygiene products to UW Tacoma students, who may visit weekly.",
+    "url": "https://www.tacoma.uw.edu/pantry",
+    "tags": ["food_pantry", "basic_needs", "food_insecurity", "hygiene", "free"],
+    "urgent": false
+  },
+  {
+    "id": "uwt-transit-upass",
+    "name": "U-PASS / Transportation Services (UW Tacoma)",
+    "category": "transportation",
+    "campus": "tacoma",
+    "description": "Information on the U-PASS, loaded onto the Husky Card, giving UW Tacoma students unlimited rides on regional buses, light rail, commuter trains, and water taxis.",
+    "url": "https://www.tacoma.uw.edu/fa/safety/transportation/u-pass",
+    "tags": ["transit", "upass", "commuter", "bus", "light_rail", "transportation"],
+    "urgent": false
+  },
+  {
+    "id": "uwt-library",
+    "name": "UW Tacoma Library",
+    "category": "study_space",
+    "campus": "tacoma",
+    "description": "The UW Tacoma Library offers research support, study spaces, reservable study rooms, a makerspace, and equipment lending across the Tioga Library and Snoqualmie buildings.",
+    "url": "https://www.tacoma.uw.edu/library",
+    "tags": ["library", "study_space", "research", "books", "makerspace"],
+    "urgent": false
+  },
+  {
+    "id": "uwt-career",
+    "name": "Career Development & Education (UW Tacoma)",
+    "category": "career",
+    "campus": "tacoma",
+    "description": "Career Development & Education supports UW Tacoma students and alumni with career advising, resume and interview help, job-search tools (Handshake), and career fairs.",
+    "url": "https://www.tacoma.uw.edu/career",
+    "tags": ["career", "jobs", "internships", "resume", "advising", "handshake"],
+    "urgent": false
+  },
+  {
+    "id": "uwt-financial-aid",
+    "name": "Office of Student Financial Aid (UW Tacoma)",
+    "category": "financial",
+    "campus": "tacoma",
+    "description": "UW Tacoma's Office of Student Financial Aid administers grants, loans, work study, and scholarships, and assists students with FAFSA/WASFA and emergency aid.",
+    "url": "https://www.tacoma.uw.edu/finaid",
+    "tags": ["financial_aid", "scholarships", "fafsa", "loans", "work_study"],
+    "urgent": false
   }
 ]

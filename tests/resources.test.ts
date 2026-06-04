@@ -47,7 +47,7 @@ describe('data/resources.json', () => {
   });
 
   it('uses official UW or whitelisted UW-partner domains for every URL', () => {
-    const uwDomains = ['washington.edu', 'uw.edu'];
+    const uwDomains = ['washington.edu', 'uw.edu', 'uwb.edu'];
     // UW-partner SaaS tenants we knowingly link to.
     const partnerHosts = new Set(['uw.joinhandshake.com']);
     for (const r of resources) {

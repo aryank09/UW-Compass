@@ -109,16 +109,20 @@ export default function Home() {
 
   const examples = [s.ex1, s.ex2, s.ex3, s.ex4];
 
+  function refreshGallery() {
+    fetch('/api/gallery')
+      .then((r) => r.json())
+      .then((d: { queries?: string[] }) => setGalleryQueries(d.queries ?? []))
+      .catch(() => {/* gallery is optional */});
+  }
+
   useEffect(() => {
     // Only auto-detect if user hasn't previously chosen a locale
     const stored = localStorage.getItem('uw-compass-locale');
     if (!stored) setLocale(detectLocale());
     const params = new URLSearchParams(window.location.search);
     if (params.get('advisor') === '1') setAdvisorMode(true);
-    fetch('/api/gallery')
-      .then((r) => r.json())
-      .then((d: { queries?: string[] }) => setGalleryQueries(d.queries ?? []))
-      .catch(() => {/* gallery is optional */});
+    refreshGallery();
   }, []);
 
   async function submit(e?: React.FormEvent) {
@@ -168,6 +172,9 @@ export default function Home() {
           setPartialNeeds(null);
         }
       );
+      // If the query was shared to the gallery, the server has just written it;
+      // refresh so the "recent questions" list reflects it without a reload.
+      if (shareQuery) refreshGallery();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
       setPartialNeeds(null);
