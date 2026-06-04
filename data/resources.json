@@ -454,5 +454,15 @@
     "url": "https://www.tacoma.uw.edu/finaid",
     "tags": ["financial_aid", "scholarships", "fafsa", "loans", "work_study"],
     "urgent": false
+  },
+  {
+    "id": "uwb-academic-advising",
+    "name": "UW Bothell Academic Advising",
+    "category": "academic",
+    "campus": "bothell",
+    "description": "Personalized support for UW Bothell undergrads with degree planning, course selection, major exploration, and pre-professional advising. Appointments available Mon–Fri 9am–4pm via Navigate360 or in person at UW1-160. Drop-in hours also available. Email uwbadvis@uw.edu or call 425-352-3427.",
+    "url": "https://www.uwb.edu/advising/",
+    "tags": ["advising", "degree_planning", "course_selection", "major_selection", "academic_support", "navigate360", "appointment", "drop_in"],
+    "urgent": false
   }
 ]

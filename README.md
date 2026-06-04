@@ -17,7 +17,7 @@ npm run seed                      # generates embeddings for the curated resourc
 npm run dev                       # http://localhost:3000
 ```
 
-You need an [OpenAI API key](https://platform.openai.com/api-keys) **with billing enabled**. Seeding all 45 resources costs a fraction of a cent on `text-embedding-3-small`.
+You need an [OpenAI API key](https://platform.openai.com/api-keys) **with billing enabled**. Seeding all 46 resources costs a fraction of a cent on `text-embedding-3-small`.
 
 ## What it does
 
@@ -248,7 +248,7 @@ If your GitHub account doesn't own the repo, the CLI alternative (`vercel login 
 
 ### Done
 
-- [x] 45 curated resources across all 7 proposal categories (Seattle, Bothell, Tacoma)
+- [x] 46 curated resources across all 7 proposal categories (Seattle, Bothell, Tacoma)
 - [x] OpenAI embedding + need-extraction + summarization pipeline
 - [x] Ranked recommendations with multi-signal scoring + category diversification
 - [x] Single-page React UI with example prompts, urgent banner, next-step plan
