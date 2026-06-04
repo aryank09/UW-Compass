@@ -239,7 +239,7 @@ export default function Home() {
         </div>
       </header>
 
-      {galleryQueries.length > 0 && !data && (
+      {galleryQueries.length > 0 && (
         <div className="mb-6">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
             {s.recentQueries}

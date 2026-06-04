@@ -26,5 +26,25 @@ export async function GET() {
       console.error('[/api/gallery] KV read failed:', err);
     }
   }
+
+  // Local dev fallback: read from data/gallery.jsonl if it exists
+  try {
+    const { existsSync, readFileSync } = await import('fs');
+    const { join } = await import('path');
+    const filePath = join(process.cwd(), 'data', 'gallery.jsonl');
+    if (existsSync(filePath)) {
+      const lines = readFileSync(filePath, 'utf-8')
+        .split('\n')
+        .map((l) => l.trim())
+        .filter(Boolean);
+      if (lines.length > 0) {
+        // Most-recent first, capped at 10
+        return NextResponse.json({ queries: lines.slice(-10).reverse() });
+      }
+    }
+  } catch (err) {
+    console.error('[/api/gallery] local file read failed:', err);
+  }
+
   return NextResponse.json({ queries: SEED_QUERIES });
 }
