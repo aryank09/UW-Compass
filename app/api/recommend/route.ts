@@ -361,7 +361,9 @@ export async function POST(req: NextRequest) {
         try {
           if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
             const { supabase } = await import('@/lib/supabase');
-            await supabase.from('gallery_queries').insert({ query: safe });
+            console.log('[/api/recommend] Writing to gallery:', safe.slice(0, 40));
+            const { error: insertError } = await supabase.from('gallery_queries').insert({ query: safe });
+            if (insertError) console.error('[/api/recommend] Insert error:', insertError);
             // Keep only the 50 most recent entries — fetch IDs beyond rank 50 and delete them
             const { data: overflow } = await supabase
               .from('gallery_queries')
