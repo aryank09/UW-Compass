@@ -81,7 +81,7 @@ export default function Home() {
   const [input, setInput] = useSafeLocalStorage('uw-compass-input', '');
   const [campus, setCampus] = useSafeLocalStorage<Campus>('uw-compass-campus', 'all');
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useSafeLocalStorage<RecommendResponse | null>('uw-compass-data', null);
+  const [data, setData] = useState<RecommendResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [partialNeeds, setPartialNeeds] = useState<ExtractedNeed[] | null>(null);
 
@@ -122,6 +122,8 @@ export default function Home() {
     if (!stored) setLocale(detectLocale());
     const params = new URLSearchParams(window.location.search);
     if (params.get('advisor') === '1') setAdvisorMode(true);
+    // Clear any stale cached results from older versions of the app
+    localStorage.removeItem('uw-compass-data');
     refreshGallery();
   }, []);
 
