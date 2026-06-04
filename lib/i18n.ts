@@ -81,6 +81,7 @@ export interface UIStrings {
   aboutAiStep2: string;
   aboutAiStep3: string;
   aboutAiStep4: string;
+  aboutAiStep5: string;
   // About — impact list
   aboutImpact1: string;
   aboutImpact2: string;
@@ -144,6 +145,7 @@ export interface UIStrings {
   aboutScore4Desc: string;
   aboutAiStep3Outro: string;
   aboutAiStep4Body: string;
+  aboutAiStep5Body: string;
   // About — built by
   aboutBuiltBy: string;
   aboutBuiltBySuffix: string;
@@ -246,7 +248,7 @@ const strings: Record<Locale, UIStrings> = {
       "One Next.js application. The frontend is a client-side React form; the backend is a set of API routes running on Node. The curated resource set and its precomputed embeddings live in the deploy bundle as a JSON file. Anonymously shared queries and feedback votes are stored in Supabase (Postgres) and accessed via the gallery and feedback API routes.",
     aboutArchNoteLabel: 'Note:',
     aboutArchNoteBody:
-      'Three OpenAI calls per request: 1 embedding + 2 chat completions. The first two run in parallel. Resource embeddings are computed once at seed time, never per request. Supabase writes (gallery, feedback) are fire-and-forget and do not block the response.',
+      'Three OpenAI calls per request: 1 embedding + 2 chat completions. The first two run in parallel. Optional two_pass and use_ai_ranker flags add 1–2 extra calls. Resource embeddings are computed once at seed time, never per request. Supabase writes (gallery, feedback) are fire-and-forget and do not block the response. A GitHub Actions CI workflow runs typecheck, lint, tests, and a full build on every push and PR.',
     aboutFlowClient: 'Browser (Client)',
     aboutFlowParallel: 'Parallel Processing',
     aboutFlowWait: 'Wait',
@@ -263,11 +265,11 @@ const strings: Record<Locale, UIStrings> = {
     aboutTechStorage: 'Storage',
     aboutTechStorageDetail: 'Resources: static JSON in deploy bundle · Gallery & feedback: Supabase (Postgres)',
     aboutTechTesting: 'Testing',
-    aboutTechTestingDetail: 'Vitest — tests covering ranker + schema + scenarios',
+    aboutTechTestingDetail: 'Vitest — 83 tests across 7 files (ranker, schema, scenarios, i18n, iCal, rate limiter, campus filter)',
     aboutTechHosting: 'Hosting',
     aboutTechHostingDetail: 'Vercel (frontend + serverless API)',
     aboutTechQuality: 'Quality',
-    aboutTechQualityDetail: 'Link-health checker run before each milestone',
+    aboutTechQualityDetail: 'GitHub Actions CI on every push & PR; weekly automated link-health check',
     aboutAiStep1Body:
       "The student's free-text input is sent to GPT-4o-mini with a typed tool definition. The model must return structured needs — each one with a category, an intensity (1–5), the supporting evidence from the input, fine-grained tags (snake_case), and an urgent boolean for safety-critical situations. No free-form JSON, no parsing fragility.",
     aboutAiStep2Body:
@@ -285,6 +287,9 @@ const strings: Record<Locale, UIStrings> = {
       "After scoring, the top 5 are picked with category diversification (max 2 from any one category) so a student with multiple needs doesn't get a homogeneous result list.",
     aboutAiStep4Body:
       "The top 5 resources plus the extracted needs go back to GPT-4o-mini (again with a typed tool) which produces a 1–2 sentence explanation per resource and a 2–4 step ordered action plan referencing the student's words.",
+    aboutAiStep5: 'Advanced options: two-pass critique, AI re-rank & iCal export',
+    aboutAiStep5Body:
+      'Three optional flags extend the core pipeline. two_pass sends a second GPT-4o-mini call right after need extraction — the model reviews its own output to catch false-urgent flags and missed categories. use_ai_ranker replaces the cosine ranker with an LLM pass that reads the full need list and selects the best-fitting resources directly (useful for comparing against the classical ranker). Once results arrive, the generated action plan can be downloaded as a standards-compliant .ics calendar file, scheduling each step automatically in any calendar app.',
     aboutBuiltBy:
       'CSS 382 — Introduction to AI · Spring 2026 · A two-person DYOP team. Source code on ',
     aboutBuiltBySuffix: '.',
@@ -411,11 +416,11 @@ const strings: Record<Locale, UIStrings> = {
     aboutTechStorage: 'Almacenamiento',
     aboutTechStorageDetail: 'Recursos: JSON estático en el paquete · Galería y feedback: Supabase (Postgres)',
     aboutTechTesting: 'Pruebas',
-    aboutTechTestingDetail: 'Vitest — pruebas que cubren el clasificador + esquema + escenarios',
+    aboutTechTestingDetail: 'Vitest — 83 pruebas en 7 archivos (clasificador, esquema, escenarios, i18n, iCal, limitador, campus)',
     aboutTechHosting: 'Hosting',
     aboutTechHostingDetail: 'Vercel (frontend + API serverless)',
     aboutTechQuality: 'Calidad',
-    aboutTechQualityDetail: 'Verificador de salud de enlaces ejecutado antes de cada hito',
+    aboutTechQualityDetail: 'GitHub Actions CI en cada push y PR; verificación de enlaces semanal automatizada',
     aboutAiStep1Body:
       'La entrada de texto libre del estudiante se envía a GPT-4o-mini con una definición de herramienta tipada. El modelo debe devolver necesidades estructuradas — cada una con una category, una intensity (1–5), la evidencia de apoyo de la entrada, tags detalladas (snake_case) y un booleano urgent para situaciones críticas de seguridad. Sin JSON de forma libre, sin fragilidad de análisis.',
     aboutAiStep2Body:
@@ -433,6 +438,9 @@ const strings: Record<Locale, UIStrings> = {
       'Después de la puntuación, se eligen los 5 mejores con diversificación de categorías (máximo 2 de una misma categoría) para que un estudiante con varias necesidades no obtenga una lista de resultados homogénea.',
     aboutAiStep4Body:
       'Los 5 recursos principales más las necesidades extraídas vuelven a GPT-4o-mini (de nuevo con una herramienta tipada) que produce una explicación de 1–2 oraciones por recurso y un plan de acción ordenado de 2–4 pasos que hace referencia a las palabras del estudiante.',
+    aboutAiStep5: 'Opciones avanzadas: dos pasadas, reclasificación IA y exportación a calendario',
+    aboutAiStep5Body:
+      'Tres indicadores opcionales amplían la canalización principal. two_pass añade una segunda llamada a GPT-4o-mini tras la extracción de necesidades — el modelo revisa su propio resultado para detectar alertas de urgencia falsas y categorías omitidas. use_ai_ranker reemplaza el clasificador coseno por un paso LLM que lee la lista completa de necesidades y selecciona directamente los recursos más adecuados. Una vez que llegan los resultados, el plan de acción puede descargarse como un archivo .ics compatible con estándares, programando cada paso automáticamente en cualquier aplicación de calendario.',
     aboutBuiltBy:
       'CSS 382 — Introducción a la IA · Primavera 2026 · Un equipo DYOP de dos personas. Código fuente en ',
     aboutBuiltBySuffix: '.',
@@ -554,11 +562,11 @@ const strings: Record<Locale, UIStrings> = {
     aboutTechStorage: '存储',
     aboutTechStorageDetail: '资源：部署包中的静态 JSON · 画廊与反馈：Supabase (Postgres)',
     aboutTechTesting: '测试',
-    aboutTechTestingDetail: 'Vitest——涵盖排序器 + 模式 + 场景的测试',
+    aboutTechTestingDetail: 'Vitest——83 个测试覆盖 7 个文件（排序器、模式、场景、i18n、iCal、限流器、校区过滤）',
     aboutTechHosting: '托管',
     aboutTechHostingDetail: 'Vercel（前端 + 无服务器 API）',
     aboutTechQuality: '质量',
-    aboutTechQualityDetail: '每个里程碑前运行的链接健康检查器',
+    aboutTechQualityDetail: 'GitHub Actions CI 在每次推送和 PR 时运行；每周自动链接健康检查',
     aboutAiStep1Body:
       '学生的自由文本输入会连同一个类型化的工具定义发送给 GPT-4o-mini。模型必须返回结构化的需求——每项都包含 category（类别）、intensity（强度 1–5）、来自输入的支持证据、细粒度的 tags（snake_case 标签），以及用于安全关键情况的 urgent 布尔值。没有自由格式的 JSON，没有解析的脆弱性。',
     aboutAiStep2Body:
@@ -576,6 +584,9 @@ const strings: Record<Locale, UIStrings> = {
       '评分后，按类别多样化选出前 5 个（同一类别最多 2 个），这样有多种需求的学生就不会得到同质化的结果列表。',
     aboutAiStep4Body:
       '前 5 个资源连同提取的需求会再次发送给 GPT-4o-mini（同样使用类型化工具），为每个资源生成 1–2 句解释，以及引用学生原话的 2–4 步有序行动计划。',
+    aboutAiStep5: '高级选项：两轮批评、AI 重新排名 & iCal 导出',
+    aboutAiStep5Body:
+      '三个可选标志扩展了核心流程。two_pass 在需求提取后立即发送第二次 GPT-4o-mini 调用——模型审视自己的输出，以发现错误的紧急标记和遗漏的类别。use_ai_ranker 用 LLM 传递替换余弦排序器，直接读取完整的需求列表并选择最合适的资源。一旦结果到达，生成的行动计划可下载为符合标准的 .ics 日历文件，在任何日历应用中自动安排每个步骤。',
     aboutBuiltBy:
       'CSS 382——人工智能导论 · 2026 春季 · 一个两人 DYOP 团队。源代码见 ',
     aboutBuiltBySuffix: '。',
@@ -703,11 +714,11 @@ const strings: Record<Locale, UIStrings> = {
     aboutTechStorage: 'Lưu trữ',
     aboutTechStorageDetail: 'Tài nguyên: JSON tĩnh trong gói · Thư viện & phản hồi: Supabase (Postgres)',
     aboutTechTesting: 'Kiểm thử',
-    aboutTechTestingDetail: 'Vitest — các bài kiểm thử bao phủ bộ xếp hạng + schema + kịch bản',
+    aboutTechTestingDetail: 'Vitest — 83 bài kiểm thử trong 7 tệp (bộ xếp hạng, schema, kịch bản, i18n, iCal, giới hạn tốc độ, lọc cơ sở)',
     aboutTechHosting: 'Lưu trữ web',
     aboutTechHostingDetail: 'Vercel (frontend + API serverless)',
     aboutTechQuality: 'Chất lượng',
-    aboutTechQualityDetail: 'Trình kiểm tra sức khỏe liên kết chạy trước mỗi cột mốc',
+    aboutTechQualityDetail: 'GitHub Actions CI trên mỗi lần push & PR; kiểm tra sức khỏe liên kết tự động hàng tuần',
     aboutAiStep1Body:
       'Văn bản tự do của sinh viên được gửi đến GPT-4o-mini cùng một định nghĩa công cụ có kiểu. Mô hình phải trả về các nhu cầu có cấu trúc — mỗi nhu cầu gồm một category, một intensity (1–5), bằng chứng hỗ trợ từ đầu vào, các tags chi tiết (snake_case), và một boolean urgent cho các tình huống quan trọng về an toàn. Không có JSON tự do, không có sự mong manh khi phân tích.',
     aboutAiStep2Body:
@@ -725,6 +736,9 @@ const strings: Record<Locale, UIStrings> = {
       'Sau khi chấm điểm, 5 kết quả hàng đầu được chọn với sự đa dạng hóa danh mục (tối đa 2 từ bất kỳ một danh mục nào) để một sinh viên có nhiều nhu cầu không nhận được danh sách kết quả đồng nhất.',
     aboutAiStep4Body:
       'Top 5 tài nguyên cùng với các nhu cầu đã trích xuất được gửi lại cho GPT-4o-mini (lại với một công cụ có kiểu) để tạo ra lời giải thích 1–2 câu cho mỗi tài nguyên và một kế hoạch hành động có thứ tự gồm 2–4 bước tham chiếu đến lời của sinh viên.',
+    aboutAiStep5: 'Tùy chọn nâng cao: hai lượt phê bình, AI xếp hạng lại & xuất iCal',
+    aboutAiStep5Body:
+      'Ba cờ tùy chọn mở rộng quy trình cốt lõi. two_pass gửi lần gọi GPT-4o-mini thứ hai ngay sau khi trích xuất nhu cầu — mô hình xem xét lại kết quả của chính mình để phát hiện cờ khẩn cấp sai và các danh mục bị bỏ sót. use_ai_ranker thay thế bộ xếp hạng cosine bằng một lượt LLM đọc toàn bộ danh sách nhu cầu và chọn trực tiếp các tài nguyên phù hợp nhất. Sau khi có kết quả, kế hoạch hành động có thể tải xuống dưới dạng tệp .ics tuân thủ tiêu chuẩn, tự động lên lịch từng bước trong bất kỳ ứng dụng lịch nào.',
     aboutBuiltBy:
       'CSS 382 — Nhập môn AI · Mùa xuân 2026 · Một nhóm DYOP hai người. Mã nguồn trên ',
     aboutBuiltBySuffix: '.',
@@ -848,11 +862,11 @@ const strings: Record<Locale, UIStrings> = {
     aboutTechStorage: '저장소',
     aboutTechStorageDetail: '리소스: 배포 번들의 정적 JSON · 갤러리 & 피드백: Supabase (Postgres)',
     aboutTechTesting: '테스트',
-    aboutTechTestingDetail: 'Vitest — 랭커 + 스키마 + 시나리오를 다루는 테스트',
+    aboutTechTestingDetail: 'Vitest — 7개 파일에 걸쳐 83개 테스트 (랭커, 스키마, 시나리오, i18n, iCal, 속도 제한, 캠퍼스 필터)',
     aboutTechHosting: '호스팅',
     aboutTechHostingDetail: 'Vercel (프론트엔드 + 서버리스 API)',
     aboutTechQuality: '품질',
-    aboutTechQualityDetail: '각 마일스톤 전에 실행되는 링크 상태 검사기',
+    aboutTechQualityDetail: 'GitHub Actions CI (모든 push & PR); 주간 자동 링크 상태 검사',
     aboutAiStep1Body:
       '학생의 자유 텍스트 입력은 타입이 지정된 도구 정의와 함께 GPT-4o-mini로 전송됩니다. 모델은 구조화된 필요를 반환해야 합니다 — 각 항목에는 category, intensity(1–5), 입력에서 가져온 근거, 세분화된 tags(snake_case), 그리고 안전이 중요한 상황을 위한 urgent 불리언이 포함됩니다. 자유 형식 JSON이 없고, 파싱의 취약성도 없습니다.',
     aboutAiStep2Body:
@@ -870,6 +884,9 @@ const strings: Record<Locale, UIStrings> = {
       '점수 산정 후, 카테고리 다양화(한 카테고리당 최대 2개)를 적용해 상위 5개를 선택하므로, 여러 필요가 있는 학생이 동질적인 결과 목록을 받지 않습니다.',
     aboutAiStep4Body:
       '상위 5개 자원과 추출된 필요가 (다시 타입이 지정된 도구와 함께) GPT-4o-mini로 돌아가, 자원당 1–2문장의 설명과 학생의 말을 참조한 2–4단계의 순서가 있는 실행 계획을 생성합니다.',
+    aboutAiStep5: '고급 옵션: 두 번 비평, AI 재순위 결정 & iCal 내보내기',
+    aboutAiStep5Body:
+      '세 가지 선택적 플래그가 핵심 파이프라인을 확장합니다. two_pass는 필요 추출 직후 GPT-4o-mini를 두 번째로 호출합니다 — 모델이 자신의 출력을 검토하여 잘못된 긴급 플래그와 누락된 카테고리를 잡아냅니다. use_ai_ranker는 코사인 랭커를 LLM 패스로 대체하여 전체 필요 목록을 읽고 가장 적합한 자원을 직접 선택합니다. 결과가 도착하면 생성된 실행 계획을 표준 준수 .ics 캘린더 파일로 다운로드하여 모든 캘린더 앱에서 각 단계를 자동으로 예약할 수 있습니다.',
     aboutBuiltBy:
       'CSS 382 — AI 입문 · 2026년 봄 · 2인 DYOP 팀. 소스 코드는 ',
     aboutBuiltBySuffix: '에 있습니다.',

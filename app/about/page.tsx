@@ -106,7 +106,7 @@ export default async function AboutPage({
               </div>
               <div className="h-6 w-0.5 bg-slate-300"></div>
               <div className="text-xs font-mono text-slate-500 bg-slate-100 px-3 py-1 rounded-full mb-2">
-                POST /api/recommend {`{ input }`}
+                POST /api/recommend {`{ input, campus, two_pass?, use_ai_ranker?, … }`}
               </div>
               <div className="h-6 w-0.5 bg-slate-300"></div>
             </div>
@@ -144,6 +144,7 @@ export default async function AboutPage({
                   <div className="bg-uw-accent-teal/10 border border-uw-accent-teal/50 rounded-lg p-3 text-center">
                     <div className="font-semibold text-uw-husky-purple mb-1">lib/recommend.ts</div>
                     <div className="text-xs text-slate-600">Cosine + Tags + Diversify</div>
+                    <div className="text-[10px] text-slate-400 mt-1 italic">optional: AI re-rank via GPT-4o-mini</div>
                   </div>
                 </div>
               </div>
@@ -160,7 +161,7 @@ export default async function AboutPage({
             <div className="flex flex-col items-center">
               <div className="h-6 w-0.5 bg-slate-300"></div>
               <div className="text-xs font-mono text-slate-500 bg-slate-100 px-3 py-1 rounded-full mb-2">
-                {`{ needs, recommendations[5], next_steps[2-4] }`}
+                {`{ needs, recommendations[5], next_steps[2-4] } → iCal download`}
               </div>
               <div className="h-6 w-0.5 bg-slate-300"></div>
               <div className="bg-white border-2 border-uw-husky-purple text-uw-husky-purple font-bold px-6 py-3 rounded-xl shadow-sm">
@@ -268,6 +269,14 @@ export default async function AboutPage({
               {s.aboutAiStep4}
             </h3>
             <p className="text-slate-700 leading-relaxed">{s.aboutAiStep4Body}</p>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+            <h3 className="font-bold text-lg text-uw-husky-purple flex items-center gap-2 mb-3">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-uw-accent-lavender text-uw-husky-purple text-sm">5</span>
+              {s.aboutAiStep5}
+            </h3>
+            <p className="text-slate-700 leading-relaxed">{s.aboutAiStep5Body}</p>
           </div>
         </div>
       </Section>
